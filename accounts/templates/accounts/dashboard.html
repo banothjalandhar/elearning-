@@ -1,0 +1,293 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard | CodeWithJalandhar{% endblock %}
+
+{% block content %}
+<section class="section-shell">
+  <div class="container">
+    <div class="dashboard-hero mb-4">
+      <div class="row align-items-center gy-4">
+        <div class="col-lg-8">
+          <span class="section-badge text-bg-light">Student Dashboard</span>
+          <h1 class="mt-3 fw-bold">Your learning, exams, placement, and live classes in one workspace</h1>
+          <p class="mb-0 text-white-50">A modern LMS dashboard inspired by leading learning platforms while keeping your current Django logic fully intact.</p>
+        </div>
+        <div class="col-lg-4 text-lg-end">
+          <a href="{% url 'course_list' %}" class="btn btn-light rounded-pill px-4">Explore More Courses</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="dashboard-layout">
+      <aside class="dashboard-sidebar">
+        <span class="section-badge">Workspace</span>
+        <h5 class="mt-3 mb-2">Student Navigation</h5>
+        <p class="text-muted mb-0">Quick links to every part of your learning and placement journey.</p>
+        <nav class="dashboard-nav">
+          <a href="#dashboard-courses"><i class="fa-solid fa-book-open"></i> Courses</a>
+          <a href="{% url 'lms:subject_list' %}"><i class="fa-solid fa-diagram-project"></i> Topics</a>
+          <a href="{% url 'lms:dashboard' %}"><i class="fa-solid fa-chart-pie"></i> LMS Progress</a>
+          <a href="{% url 'classroom:class_list' %}"><i class="fa-solid fa-video"></i> Live Classes</a>
+          <a href="{% url 'classroom:class_list' %}"><i class="fa-solid fa-play-circle"></i> Recordings</a>
+          <a href="{% url 'classroom:class_list' %}"><i class="fa-solid fa-note-sticky"></i> Notes</a>
+          <a href="{% url 'exams:exam_list' %}"><i class="fa-solid fa-file-lines"></i> Exams</a>
+          <a href="{% url 'placement:job_list' %}"><i class="fa-solid fa-briefcase"></i> Placement</a>
+          <a href="{% url 'placement:job_list' %}"><i class="fa-solid fa-building-user"></i> Jobs</a>
+          <a href="{% url 'dashboard' %}"><i class="fa-regular fa-user"></i> Profile</a>
+        </nav>
+      </aside>
+
+      <div class="d-grid gap-4">
+        <div class="row g-4">
+          <div class="col-sm-6 col-xl-3">
+            <div class="summary-card">
+              <div class="summary-icon"><i class="fa-solid fa-book-open"></i></div>
+              <h6>My Courses</h6>
+              <h3 class="fw-bold mb-1">{{ enrollments|length }}</h3>
+              <p class="text-muted mb-0">Active purchased courses</p>
+            </div>
+          </div>
+          <div class="col-sm-6 col-xl-3">
+            <div class="summary-card">
+              <div class="summary-icon"><i class="fa-solid fa-file-lines"></i></div>
+              <h6>My Exams</h6>
+              <h3 class="fw-bold mb-1">{{ student_exam_count }}</h3>
+              <p class="text-muted mb-0">Started placement tests</p>
+            </div>
+          </div>
+          <div class="col-sm-6 col-xl-3">
+            <div class="summary-card">
+              <div class="summary-icon"><i class="fa-solid fa-square-poll-vertical"></i></div>
+              <h6>Results</h6>
+              <h3 class="fw-bold mb-1">{{ result_count }}</h3>
+              <p class="text-muted mb-0">Recorded exam results</p>
+            </div>
+          </div>
+          <div class="col-sm-6 col-xl-3">
+            <div class="summary-card">
+              <div class="summary-icon"><i class="fa-solid fa-chart-line"></i></div>
+              <h6>Subscription</h6>
+              <h3 class="fw-bold mb-1">{% if active_subscription %}Active{% else %}Ready{% endif %}</h3>
+              <p class="text-muted mb-0">{% if active_subscription %}{{ active_subscription.plan.name }}{% else %}Continue your progress{% endif %}</p>
+            </div>
+          </div>
+          <div class="col-sm-6 col-xl-3">
+            <div class="summary-card">
+              <div class="summary-icon"><i class="fa-solid fa-diagram-project"></i></div>
+              <h6>Topics Done</h6>
+              <h3 class="fw-bold mb-1">{{ lms_completed_topics }}</h3>
+              <p class="text-muted mb-0">{{ lms_progress_percentage }}% LMS completion</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-4">
+          <div class="col-xl-8">
+            <div id="dashboard-courses" class="dashboard-panel">
+              <div class="dashboard-panel-heading">
+                <span class="section-badge">Courses</span>
+                <h3 class="mt-3">Enrolled learning paths</h3>
+                <p class="text-muted mb-0">Continue structured programs with progress, quick actions, and direct course access.</p>
+              </div>
+              <div class="row g-4">
+                {% if enrollments %}
+                  {% for enrollment in enrollments %}
+                    <div class="col-md-6">
+                      <div class="dashboard-card h-100">
+                        <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+                          <div>
+                            <span class="meta-pill mb-2 d-inline-flex"><i class="fa-solid fa-circle-play"></i> Learning Path</span>
+                            <h5 class="mb-1">{{ enrollment.course.title|title }}</h5>
+                            <p class="text-muted mb-0">Continue with guided lessons, practice, and outcome-focused preparation.</p>
+                          </div>
+                          <span class="badge text-bg-success rounded-pill px-3 py-2">Enrolled</span>
+                        </div>
+                        <div class="progress-wrap mb-3">
+                          <div class="d-flex justify-content-between small text-muted mb-2">
+                            <span>Progress</span>
+                            <span>{{ enrollment.progress|floatformat:0 }}%</span>
+                          </div>
+                          <div class="progress">
+                            <div class="progress-bar" role="progressbar" style="width: {{ enrollment.progress|default:0 }}%;" aria-valuenow="{{ enrollment.progress|default:0 }}" aria-valuemin="0" aria-valuemax="100"></div>
+                          </div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                          <span class="rating-pill"><i class="fa-solid fa-layer-group"></i> Access Active</span>
+                          <a href="{% url 'course_detail' enrollment.course.id %}" class="btn btn-primary px-4">Learn Now</a>
+                        </div>
+                      </div>
+                    </div>
+                  {% endfor %}
+                {% else %}
+                  <div class="col-12">
+                    <div class="cta-panel text-center">
+                      <h3 class="fw-bold">You have not purchased any courses yet</h3>
+                      <p class="text-white-50 mb-4">Browse premium courses, join a batch, and start building your dashboard journey.</p>
+                      <a class="btn btn-light px-4" href="{% url 'course_list' %}">Browse Courses</a>
+                    </div>
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          <div class="col-xl-4">
+            <div class="dashboard-panel">
+              <div class="dashboard-panel-heading">
+                <span class="section-badge">Quick Access</span>
+                <h3 class="mt-3">What do you want to do next?</h3>
+                <p class="text-muted mb-0">Fast actions across exams, classes, placement, and batches.</p>
+              </div>
+              <div class="d-grid gap-3">
+                <a href="{% url 'exams:exam_list' %}" class="dashboard-card">
+                  <h5 class="mb-2">Exams</h5>
+                  <p class="mb-0 text-muted">Practice placement rounds in a clean, timed exam environment.</p>
+                </a>
+                <a href="{% url 'classroom:class_list' %}" class="dashboard-card">
+                  <h5 class="mb-2">Live Classes</h5>
+                  <p class="mb-0 text-muted">Join current classes, open notes, and revisit recordings.</p>
+                </a>
+                <a href="{% url 'placement:job_list' %}" class="dashboard-card">
+                  <h5 class="mb-2">Jobs</h5>
+                  <p class="mb-0 text-muted">Explore placement openings and apply with your resume.</p>
+                </a>
+                <a href="{% url 'upcoming_course_list' %}" class="dashboard-card">
+                  <h5 class="mb-2">Join Batch</h5>
+                  <p class="mb-0 text-muted">See the next learning cohorts and upcoming training schedules.</p>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {% include "classroom/dashboard_class.html" %}
+
+        <div class="row g-4">
+          <div class="col-xl-7">
+            <div class="dashboard-panel">
+              <div class="dashboard-panel-heading">
+                <span class="section-badge">Placement Portal</span>
+                <h3 class="mt-3">Latest job opportunities</h3>
+                <p class="text-muted mb-0">Browse hiring opportunities curated for students and job seekers.</p>
+              </div>
+              <div class="row g-4">
+                {% for job in latest_jobs %}
+                  <div class="col-md-6">
+                    <div class="dashboard-card h-100">
+                      <span class="meta-pill mb-2 d-inline-flex"><i class="fa-solid fa-briefcase"></i> {{ job.company }}</span>
+                      <h5 class="mb-1">{{ job.title }}</h5>
+                      <p class="text-muted mb-3">{{ job.location|default:"Remote" }}</p>
+                      <a href="{% url 'placement:job_detail' job.id %}" class="btn btn-primary px-4">View Job</a>
+                    </div>
+                  </div>
+                {% empty %}
+                  <div class="col-12">
+                    <div class="dashboard-card">
+                      <h5 class="mb-2">No placement jobs yet</h5>
+                      <p class="text-muted mb-0">New opportunities added by admin or fetched from the command will appear here.</p>
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+          <div class="col-xl-5">
+            <div class="d-grid gap-4">
+              <div class="dashboard-panel">
+                <div class="dashboard-panel-heading">
+                  <span class="section-badge">Mock Interview</span>
+                  <h3 class="mt-3">Upcoming schedule</h3>
+                </div>
+                {% if upcoming_mock_interview %}
+                  <p class="text-muted mb-2">{{ upcoming_mock_interview.date }} at {{ upcoming_mock_interview.time }}</p>
+                  {% if upcoming_mock_interview.meeting_link %}
+                    <a href="{{ upcoming_mock_interview.meeting_link }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary px-4">Join Interview</a>
+                  {% else %}
+                    <p class="text-muted mb-0">Meeting link will be shared soon.</p>
+                  {% endif %}
+                {% else %}
+                  <p class="text-muted mb-0">No mock interview has been scheduled yet.</p>
+                {% endif %}
+              </div>
+              <div class="dashboard-panel">
+                <div class="dashboard-panel-heading">
+                  <span class="section-badge">Application Tracker</span>
+                  <h3 class="mt-3">My job applications</h3>
+                </div>
+                <div class="dashboard-mini-list">
+                  {% for application in my_job_applications %}
+                    <div class="mini-row">
+                      <div>
+                        <div class="fw-semibold">{{ application.job.title }}</div>
+                        <div class="small text-muted">{{ application.job.company }}</div>
+                      </div>
+                      <span class="badge text-bg-light">{{ application.get_status_display }}</span>
+                    </div>
+                  {% empty %}
+                    <p class="text-muted mb-0">You have not applied for any jobs yet.</p>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-4">
+          <div class="col-xl-7">
+            <div class="dashboard-panel">
+              <div class="dashboard-panel-heading">
+                <span class="section-badge">Topic LMS</span>
+                <h3 class="mt-3">Structured learning progress</h3>
+                <p class="text-muted mb-0">Move through subjects, topic tests, coding practice, and batch-specific exam access.</p>
+              </div>
+              <div class="row g-4">
+                <div class="col-md-4">
+                  <div class="dashboard-card h-100">
+                    <h5 class="mb-2">{{ lms_subject_count }}</h5>
+                    <p class="text-muted mb-3">Subjects available to all learners</p>
+                    <a href="{% url 'lms:subject_list' %}" class="btn btn-primary px-4">Browse Subjects</a>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="dashboard-card h-100">
+                    <h5 class="mb-2">{{ lms_topic_count }}</h5>
+                    <p class="text-muted mb-3">Topics across Python, Java, HTML, CSS, and JavaScript</p>
+                    <a href="{% url 'lms:dashboard' %}" class="btn btn-outline-primary px-4">View Progress</a>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="dashboard-card h-100">
+                    <h5 class="mb-2">{% if lms_batch %}{{ lms_batch.name }}{% else %}No Batch{% endif %}</h5>
+                    <p class="text-muted mb-3">Scheduled exams stay restricted to the assigned batch</p>
+                    <a href="{% url 'lms:scheduled_exam_list' %}" class="btn btn-outline-dark px-4">Batch Exams</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-xl-5">
+            <div class="dashboard-panel">
+              <div class="dashboard-panel-heading">
+                <span class="section-badge">Recent Topic Tests</span>
+                <h3 class="mt-3">Latest scores</h3>
+              </div>
+              <div class="dashboard-mini-list">
+                {% for test in lms_recent_tests %}
+                  <div class="mini-row">
+                    <div>
+                      <div class="fw-semibold">{{ test.test.title }}</div>
+                      <div class="small text-muted">{{ test.test.topic.name }}</div>
+                    </div>
+                    <span class="badge text-bg-light">{{ test.score }}/{{ test.total }}</span>
+                  </div>
+                {% empty %}
+                  <p class="text-muted mb-0">Topic-based test results will appear here after your first attempt.</p>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

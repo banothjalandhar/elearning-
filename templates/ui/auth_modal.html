@@ -1,0 +1,11 @@
+<div class="ui-auth-modal" id="authModal" data-auth-modal aria-hidden="true">
+  <div class="ui-auth-backdrop" data-auth-close></div>
+  <div class="ui-auth-dialog" role="dialog" aria-modal="true" aria-labelledby="authModalTitle">
+    <button type="button" class="ui-auth-close" data-auth-close aria-label="Close authentication form">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+    <div class="ui-auth-content">
+      {% include "components/auth_forms.html" %}
+    </div>
+  </div>
+</div>

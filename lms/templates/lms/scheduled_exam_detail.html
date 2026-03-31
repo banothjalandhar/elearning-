@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}{{ scheduled_exam.title }} | CodeWithJalandhar{% endblock %}
+
+{% block content %}
+<section class="section-shell">
+  <div class="container">
+    <div class="dashboard-panel">
+      <div class="dashboard-panel-heading">
+        <span class="section-badge">{{ scheduled_exam.batch.name }}</span>
+        <h1 class="mt-3">{{ scheduled_exam.title }}</h1>
+        <p class="text-muted mb-0">{{ scheduled_exam.subject.name }} scheduled from {{ scheduled_exam.start_time|date:"d M Y h:i A" }} to {{ scheduled_exam.end_time|date:"d M Y h:i A" }}.</p>
+      </div>
+      <div class="dashboard-card mt-4">
+        {% if can_start %}
+          <p class="mb-3">This scheduled exam is currently active for your batch.</p>
+          {% if scheduled_exam.topic_test %}
+            <a href="{% url 'lms:topic_test' scheduled_exam.topic_test.id %}" class="btn btn-primary px-4">Start Exam</a>
+          {% else %}
+            <p class="text-muted mb-0">A test has not been attached yet. Ask the admin to link a topic test.</p>
+          {% endif %}
+        {% elif starts_later %}
+          <p class="mb-0 text-muted">This exam has not opened yet.</p>
+        {% else %}
+          <p class="mb-0 text-muted">This exam window has closed.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

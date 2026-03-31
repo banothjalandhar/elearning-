@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Live Classroom{% endblock %}
+
+{% block content %}
+<section class="section-shell">
+  <div class="container">
+    <div class="classroom-hero mb-4">
+      <div class="row align-items-center gy-4">
+        <div class="col-lg-8">
+          <span class="section-badge text-bg-light">Live Classroom</span>
+          <h1 class="mt-3 fw-bold">Join scheduled classes, open notes, and revisit recordings</h1>
+          <p class="mb-0 text-white-50">A cleaner live-class experience inspired by premium LMS products, while keeping your current classroom backend fully untouched.</p>
+        </div>
+        <div class="col-lg-4 text-lg-end">
+          <a href="{% url 'classroom:whiteboard' %}" class="btn btn-light px-4">Open Whiteboard</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      {% for live_class in classes %}
+        <div class="col-lg-6">
+          <div class="class-card-modern h-100">
+            <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+              <div>
+                <span class="meta-pill mb-2 d-inline-flex"><i class="fa-solid fa-video"></i> {{ live_class.subject }}</span>
+                <h4 class="mb-1">{{ live_class.title }}</h4>
+                {% if live_class.course %}
+                  <p class="small text-muted mb-2">Course: {{ live_class.course.title }}</p>
+                {% endif %}
+                <p class="text-muted mb-0">{{ live_class.description|default:"Join the scheduled class and continue learning live." }}</p>
+              </div>
+              <span class="badge text-bg-success rounded-pill px-3 py-2">Live</span>
+            </div>
+
+            <div class="class-meta">
+              <span class="meta-pill"><i class="fa-regular fa-calendar"></i> {{ live_class.date|date:"d M Y" }}</span>
+              <span class="meta-pill"><i class="fa-regular fa-clock"></i> {{ live_class.time|time:"h:i A" }}</span>
+            </div>
+
+            <div class="class-actions">
+              <a href="{% url 'classroom:join_class' live_class.id %}" class="btn btn-primary px-4">Join Class</a>
+              <a href="{% url 'classroom:class_detail' live_class.id %}" class="btn btn-outline-dark px-4">View Details</a>
+              {% if live_class.notes_file %}
+                <a href="{% url 'classroom:download_notes' live_class.id %}" class="btn btn-outline-secondary px-4">Notes</a>
+              {% endif %}
+              {% if live_class.recording_link %}
+                <a href="{% url 'classroom:watch_recording' live_class.id %}" class="btn btn-outline-secondary px-4">Recording</a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <div class="col-12">
+          <div class="cta-panel text-center">
+            <h3 class="fw-bold">No live classes scheduled yet</h3>
+            <p class="text-white-50 mb-4">Please check back soon for new live sessions, notes, and recordings.</p>
+            <a href="{% url 'dashboard' %}" class="btn btn-light px-4">Back to Dashboard</a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,375 @@
+:root {
+  --lamp-bg-dark: #07111f;
+  --lamp-bg-mid: #10233d;
+  --lamp-bg-light: #f8f1d8;
+  --lamp-text-dark: #e9eef8;
+  --lamp-text-light: #172033;
+  --lamp-panel-dark: rgba(10, 17, 31, 0.78);
+  --lamp-panel-light: rgba(255, 252, 241, 0.82);
+  --lamp-border-dark: rgba(255, 255, 255, 0.14);
+  --lamp-border-light: rgba(23, 32, 51, 0.1);
+  --lamp-gold: #f6d774;
+  --lamp-gold-strong: #ffd15c;
+  --lamp-shadow-dark: 0 30px 70px rgba(0, 0, 0, 0.38);
+  --lamp-shadow-light: 0 25px 60px rgba(151, 122, 49, 0.18);
+  --lamp-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body.lamp-page,
+body.lamp-enabled {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Poppins", "Inter", sans-serif;
+  color: var(--lamp-text-dark);
+  background:
+    radial-gradient(circle at top center, rgba(253, 206, 93, 0.05), transparent 18%),
+    linear-gradient(180deg, var(--lamp-bg-mid) 0%, var(--lamp-bg-dark) 48%, #050b14 100%);
+  transition:
+    background 0.7s var(--lamp-ease),
+    color 0.55s var(--lamp-ease);
+  overflow-x: hidden;
+}
+
+body.lamp-page.lamp-on,
+body.lamp-enabled.lamp-on {
+  color: var(--lamp-text-light);
+  background:
+    radial-gradient(circle at 50% 10%, rgba(255, 239, 175, 0.92), rgba(255, 233, 154, 0.34) 20%, rgba(255, 236, 183, 0) 45%),
+    linear-gradient(180deg, #f4e7ba 0%, #f8f1d8 46%, #efe6c9 100%);
+}
+
+.lamp-login-shell {
+  position: relative;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 8rem 1.25rem 3rem;
+  isolation: isolate;
+}
+
+.lamp-scene {
+  position: absolute;
+  inset: 0 auto auto 50%;
+  transform: translateX(-50%);
+  width: min(320px, 80vw);
+  pointer-events: none;
+  z-index: 4;
+}
+
+.lamp-fixture {
+  position: relative;
+  width: 160px;
+  margin: 0 auto;
+  padding-top: 1rem;
+}
+
+.lamp-cap {
+  width: 110px;
+  height: 58px;
+  margin: 0 auto;
+  border-radius: 0 0 64px 64px;
+  background: linear-gradient(180deg, #1c2738 0%, #0f1621 100%);
+  box-shadow: inset 0 -8px 12px rgba(255, 255, 255, 0.06);
+}
+
+body.lamp-on .lamp-cap {
+  background: linear-gradient(180deg, #5d4b1c 0%, #30240f 100%);
+}
+
+.lamp-bulb {
+  width: 42px;
+  height: 42px;
+  margin: -8px auto 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #d7e1f2, #92a0b4 70%);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.24);
+}
+
+body.lamp-on .lamp-bulb {
+  background: radial-gradient(circle at 50% 45%, #fffdf4 0%, #ffe598 40%, #ffc74a 100%);
+  box-shadow:
+    0 0 16px rgba(255, 225, 131, 0.92),
+    0 0 42px rgba(255, 220, 121, 0.72),
+    0 10px 28px rgba(136, 100, 21, 0.25);
+}
+
+.lamp-bulb-glow {
+  position: absolute;
+  left: 50%;
+  top: 40px;
+  width: 260px;
+  height: 180px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 234, 155, 0.42), rgba(255, 234, 155, 0.08) 45%, transparent 72%);
+  opacity: 0;
+  filter: blur(10px);
+  transition: opacity 0.55s var(--lamp-ease);
+}
+
+body.lamp-on .lamp-bulb-glow {
+  opacity: 1;
+}
+
+.lamp-cord-button {
+  position: relative;
+  display: block;
+  width: 40px;
+  margin: 0.2rem auto 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  pointer-events: auto;
+  cursor: pointer;
+  outline: none;
+}
+
+.lamp-cord-button:focus-visible .lamp-cord-handle {
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.22);
+}
+
+.lamp-cord-line {
+  display: block;
+  width: 2px;
+  height: 140px;
+  margin: 0 auto;
+  background: linear-gradient(180deg, #c8d2e1 0%, #eef2f8 100%);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
+}
+
+.lamp-cord-handle {
+  display: block;
+  width: 24px;
+  height: 24px;
+  margin: -2px auto 0;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #f4f6fb 0%, #c1cad8 100%);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.22);
+  transition:
+    transform 0.28s var(--lamp-ease),
+    box-shadow 0.28s var(--lamp-ease);
+}
+
+.lamp-cord-button.is-pulling .lamp-cord-handle {
+  transform: translateY(14px) scale(0.96);
+  box-shadow: 0 18px 30px rgba(0, 0, 0, 0.22);
+}
+
+.lamp-room-glow {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 231, 150, 0.42), transparent 28%),
+    radial-gradient(circle at 50% 35%, rgba(255, 241, 208, 0.14), transparent 44%);
+  opacity: 0;
+  transition: opacity 0.65s var(--lamp-ease);
+  pointer-events: none;
+  z-index: 1;
+}
+
+body.lamp-on .lamp-room-glow {
+  opacity: 1;
+}
+
+.lamp-login-panel {
+  position: relative;
+  width: min(100%, 460px);
+  z-index: 3;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px) scale(0.88);
+  transition:
+    opacity 0.4s var(--lamp-ease),
+    transform 0.45s var(--lamp-ease),
+    visibility 0.4s var(--lamp-ease);
+}
+
+.lamp-login-panel.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+}
+
+.lamp-login-card {
+  border-radius: 28px;
+  padding: 2rem;
+  background: var(--lamp-panel-dark);
+  border: 1px solid var(--lamp-border-dark);
+  box-shadow: var(--lamp-shadow-dark);
+  backdrop-filter: blur(18px);
+  transition:
+    background 0.55s var(--lamp-ease),
+    border-color 0.55s var(--lamp-ease),
+    box-shadow 0.55s var(--lamp-ease);
+}
+
+body.lamp-on .lamp-login-card {
+  background: var(--lamp-panel-light);
+  border-color: var(--lamp-border-light);
+  box-shadow: var(--lamp-shadow-light);
+}
+
+.lamp-kicker {
+  display: inline-flex;
+  padding: 0.45rem 0.8rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #fff4c1;
+  background: rgba(255, 215, 116, 0.14);
+}
+
+body.lamp-on .lamp-kicker {
+  color: #7b5a06;
+  background: rgba(255, 209, 92, 0.22);
+}
+
+.lamp-login-title {
+  margin: 1rem 0 0.75rem;
+  font-size: clamp(1.9rem, 4vw, 2.5rem);
+  line-height: 1.08;
+  font-weight: 800;
+}
+
+.lamp-login-copy,
+.lamp-login-links a,
+.lamp-field .form-label,
+.lamp-form .text-danger {
+  transition: color 0.55s var(--lamp-ease);
+}
+
+.lamp-login-copy {
+  margin-bottom: 1.5rem;
+  color: rgba(233, 238, 248, 0.76);
+}
+
+body.lamp-on .lamp-login-copy {
+  color: rgba(23, 32, 51, 0.72);
+}
+
+.lamp-field {
+  margin-bottom: 1rem;
+}
+
+.lamp-field input {
+  width: 100%;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.08);
+  color: inherit;
+  padding: 0.88rem 1rem;
+  transition:
+    background 0.35s ease,
+    border-color 0.35s ease,
+    box-shadow 0.35s ease;
+}
+
+.lamp-field input::placeholder {
+  color: rgba(233, 238, 248, 0.45);
+}
+
+body.lamp-on .lamp-field input {
+  border-color: rgba(23, 32, 51, 0.12);
+  background: rgba(255, 255, 255, 0.8);
+}
+
+body.lamp-on .lamp-field input::placeholder {
+  color: rgba(23, 32, 51, 0.4);
+}
+
+.lamp-field input:focus {
+  outline: none;
+  border-color: rgba(246, 215, 116, 0.8);
+  box-shadow: 0 0 0 4px rgba(246, 215, 116, 0.18);
+}
+
+.lamp-actions {
+  margin-top: 1.25rem;
+}
+
+.lamp-form .btn-primary {
+  border: 0;
+  border-radius: 999px;
+  padding: 0.9rem 1rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #ffd15c 0%, #ffab2d 100%);
+  box-shadow: 0 18px 34px rgba(255, 180, 61, 0.25);
+  color: #2f2400;
+}
+
+.lamp-form .btn-primary:hover,
+.lamp-form .btn-primary:focus {
+  color: #2f2400;
+  transform: translateY(-1px);
+}
+
+.lamp-login-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.9rem;
+  flex-wrap: wrap;
+  margin-top: 1.25rem;
+}
+
+.lamp-login-links a {
+  color: rgba(233, 238, 248, 0.82);
+  font-weight: 600;
+}
+
+body.lamp-on .lamp-login-links a {
+  color: rgba(23, 32, 51, 0.8);
+}
+
+.lamp-link-divider {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.35;
+}
+
+.lamp-message-stack .alert {
+  border-radius: 18px;
+}
+
+@media (max-width: 767px) {
+  .lamp-login-shell {
+    padding-top: 10rem;
+  }
+
+  .lamp-scene {
+    width: 220px;
+  }
+
+  .lamp-cord-line {
+    height: 112px;
+  }
+
+  .lamp-login-card {
+    padding: 1.5rem;
+    border-radius: 24px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.lamp-page,
+  body.lamp-enabled,
+  .lamp-bulb-glow,
+  .lamp-room-glow,
+  .lamp-login-panel,
+  .lamp-login-card,
+  .lamp-login-copy,
+  .lamp-login-links a,
+  .lamp-field input,
+  .lamp-cord-handle {
+    transition: none;
+  }
+}

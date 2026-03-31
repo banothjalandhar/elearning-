@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .blog-container {
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 20px;
+        background: #fff;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+    }
+    .blog-title {
+        font-size: 2rem;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+    .blog-meta {
+        color: #777;
+        font-size: 0.9rem;
+        margin-bottom: 20px;
+    }
+    .blog-image {
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+    .blog-content {
+        font-size: 1.1rem;
+        line-height: 1.7;
+        color: #333;
+    }
+    .back-btn {
+        display: inline-block;
+        padding: 10px 20px;
+        margin-top: 20px;
+        background: #4a5568;
+        color: white;
+        border-radius: 6px;
+        text-decoration: none;
+        transition: 0.3s;
+    }
+    .back-btn:hover {
+        background: #2d3748;
+    }
+    /* Scroll to top button */
+    #scrollTopBtn {
+        display: none;
+        position: fixed;
+        bottom: 40px;
+        right: 30px;
+        z-index: 99;
+        background: #4a90e2;
+        color: white;
+        padding: 10px;
+        border-radius: 50%;
+        font-size: 18px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+    #scrollTopBtn:hover {
+        background: #357ABD;
+    }
+</style>
+
+<div class="blog-container">
+    <h1 class="blog-title">{{ blog.title }}</h1>
+    <div class="blog-meta">
+        By {{ blog.author }} | {{ blog.created_at|date:"M d, Y" }}
+    </div>
+
+    {% if blog.image %}
+        <img src="{{ blog.image.url }}" alt="{{ blog.title }}" class="blog-image">
+    {% endif %}
+
+    <div class="blog-content">
+        {{ blog.content|safe }}
+    </div>
+
+    <a href="{% url 'blog_list' %}" class="back-btn">← Back to Blogs</a>
+</div>
+
+<!-- Scroll to Top Button -->
+<button id="scrollTopBtn" title="Go to top">↑</button>
+
+<script>
+    let mybutton = document.getElementById("scrollTopBtn");
+    window.onscroll = function() {
+        if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+            mybutton.style.display = "block";
+        } else {
+            mybutton.style.display = "none";
+        }
+    };
+    mybutton.onclick = function() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+</script>
+{% endblock %}

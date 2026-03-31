@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Blogs - E-Learning Platform{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+
+    <!-- Page Heading -->
+    <div class="text-center mb-5">
+        <h1 class="fw-bold">Our Blogs</h1>
+        <p class="text-muted">Explore learning guides, career tips, success stories, and motivation for your journey.</p>
+    </div>
+
+    <!-- Category Filters -->
+    <div class="d-flex justify-content-center mb-4 flex-wrap gap-2">
+        <a href="{% url 'blog_list' %}" class="btn {% if not request.GET.category %}btn-primary{% else %}btn-outline-primary{% endif %}">All</a>
+        <a href="?category=guides" class="btn {% if request.GET.category == 'guides' %}btn-primary{% else %}btn-outline-primary{% endif %}">Educational & Learning Guides</a>
+        <a href="?category=career" class="btn {% if request.GET.category == 'career' %}btn-primary{% else %}btn-outline-primary{% endif %}">Career & Industry Articles</a>
+        <a href="?category=success" class="btn {% if request.GET.category == 'success' %}btn-primary{% else %}btn-outline-primary{% endif %}">Student Success Stories</a>
+        <a href="?category=tips" class="btn {% if request.GET.category == 'tips' %}btn-primary{% else %}btn-outline-primary{% endif %}">Study Tips & Motivation</a>
+    </div>
+
+    <!-- Blog Cards -->
+    <div class="row g-4">
+        {% for blog in blogs %}
+        <div class="col-md-4">
+            <div class="card shadow-lg border-0 rounded-3 h-100 hover-card">
+                {% if blog.image %}
+                <img src="{{ blog.image.url }}" class="card-img-top rounded-top" alt="{{ blog.title }}">
+                {% else %}
+                <img src="{% static 'images/default_blog.jpg' %}" class="card-img-top rounded-top" alt="{{ blog.title }}">
+                {% endif %}
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title fw-bold">{{ blog.title }}</h5>
+                    <p class="text-muted small mb-2">
+                        {{ blog.created_at|date:"M d, Y" }} | {{ blog.get_category_display }}
+                    </p>
+                    <p class="card-text">{{ blog.content|truncatechars:120 }}</p>
+                    <a href="{% url 'blog_detail' blog.slug %}" class="mt-auto btn btn-sm btn-primary">Read More</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="text-center py-5">
+            <h4 class="text-muted">No blogs found in this category yet.</h4>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+
+<!-- Extra Styling for Hover Effect and Image Uniformity -->
+<style>
+    .hover-card {
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s;
+    }
+    .hover-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0px 8px 20px rgba(0,0,0,0.15);
+    }
+    /* Force consistent image height and cropping */
+    .card-img-top {
+        width: 100%;
+        height: 200px; /* fixed height for all images */
+        object-fit: cover; /* crop to fill container without distortion */
+        border-top-left-radius: 0.75rem;
+        border-top-right-radius: 0.75rem;
+    }
+</style>
+{% endblock %}

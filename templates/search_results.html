@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+  <div class="py-3">
+    <h2 class="fw-bold mb-2">
+      <i class="bi bi-search me-1"></i>Search Results for <span class="text-primary">"{{ query }}"</span>
+    </h2>
+    <hr>
+    {% if courses %}
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 align-items-start">
+        {% for course in courses %}
+          <div class="col d-flex">
+            <div class="card shadow-sm" style="width: 320px; margin-left: 0;">
+              {% if course.image %}
+                <img src="{{ course.image.url }}" class="card-img-top" alt="{{ course.title }}"
+                     style="max-height:220px;width:100%;object-fit:contain;background:#fff;border-top-left-radius:1.1rem;border-top-right-radius:1.1rem;">
+              {% else %}
+                <div style="height:180px; background:#f3f3f3; border-top-left-radius:1.1rem;border-top-right-radius:1.1rem; display:flex;align-items:center;justify-content:center;">
+                  <span class="text-secondary small">No Image</span>
+                </div>
+              {% endif %}
+              <div class="card-body">
+                <h5 class="card-title fw-bold">{{ course.title }}</h5>
+                <p class="mb-1"><span style="font-size:1.18rem;">🪙</span> <b>Price:</b>
+                  <span class="fw-bold text-success">₹{{ course.price }}</span>
+                </p>
+                <p class="text-muted small mb-2">{{ course.description|truncatechars:80 }}</p>
+                <a href="{% url 'course_detail' course.id %}" class="btn btn-primary w-75 d-block mx-auto" style="border-radius:1.1rem;font-weight:700;">View Course</a>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="alert alert-info mt-1 py-1 small">No courses found.</div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

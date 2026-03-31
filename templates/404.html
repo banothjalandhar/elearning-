@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Page Not Found | CodeWithJalandhar{% endblock %}
+
+{% block content %}
+<section class="section-shell">
+  <div class="container">
+    <div class="cta-panel text-center">
+      <span class="section-badge text-bg-light">404 Error</span>
+      <h1 class="mt-3 fw-bold">The page you requested does not exist</h1>
+      <p class="text-white-50 mb-4">The link may be broken, outdated, or the content may have been moved to a different section.</p>
+      <div class="d-flex flex-wrap justify-content-center gap-3">
+        <a href="{% url 'course_list' %}" class="btn btn-light px-4">Go to Home</a>
+        <a href="{% url 'dashboard' %}" class="btn btn-outline-light px-4">Open Dashboard</a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

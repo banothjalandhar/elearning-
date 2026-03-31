@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}{{ test.title }} | CodeWithJalandhar{% endblock %}
+
+{% block content %}
+<section class="section-shell">
+  <div class="container">
+    <div class="dashboard-panel">
+      <div class="dashboard-panel-heading">
+        <span class="section-badge">{{ test.topic.subject.name }}</span>
+        <h1 class="mt-3">{{ test.title }}</h1>
+        <p class="text-muted mb-0">{{ test.duration }} minute topic test for {{ test.topic.name }}.</p>
+      </div>
+
+      <form method="post" class="mt-4">
+        {% csrf_token %}
+        <div class="d-grid gap-4">
+          {% for question in questions %}
+            <div class="dashboard-card">
+              <h3 class="h5">Question {{ forloop.counter }}</h3>
+              <p class="mb-3">{{ question.question_text }}</p>
+              <div class="d-grid gap-2">
+                {% for value, label in question.options %}
+                  <label class="border rounded-4 px-3 py-2">
+                    <input type="radio" name="question_{{ question.id }}" value="{{ value }}">
+                    <span class="ms-2">{{ label }}</span>
+                  </label>
+                {% endfor %}
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+
+        <div class="mt-4">
+          <button type="submit" class="btn btn-primary px-4">Submit Test</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Exam Result{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4 text-center">
+          <span class="badge {% if result.passed %}text-bg-success{% else %}text-bg-danger{% endif %} mb-3">
+            {% if result.passed %}Passed{% else %}Needs Improvement{% endif %}
+          </span>
+          <h1 class="fw-bold">{{ result.exam.title }}</h1>
+          <p class="text-muted">{{ result.exam.get_category_display }}</p>
+          <div class="row g-3 my-4">
+            <div class="col-md-4">
+              <div class="border rounded p-3">
+                <div class="text-muted small">Score</div>
+                <div class="fs-3 fw-bold">{{ result.score }}</div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="border rounded p-3">
+                <div class="text-muted small">Total Marks</div>
+                <div class="fs-3 fw-bold">{{ result.exam.total_marks }}</div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="border rounded p-3">
+                <div class="text-muted small">Submitted On</div>
+                <div class="fw-bold">{{ result.created_at|date:"d M Y H:i" }}</div>
+              </div>
+            </div>
+          </div>
+          <a href="{% url 'exams:exam_history' %}" class="btn btn-outline-primary">History</a>
+          <a href="{% url 'exams:exam_list' %}" class="btn btn-primary">Back to Exams</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,76 @@
+<nav class="navbar navbar-expand-xl sticky-top lms-navbar">
+  <div class="container">
+    <a class="navbar-brand d-flex align-items-center gap-2" href="{% url 'course_list' %}">
+      <span class="brand-mark"><i class="fa-solid fa-graduation-cap"></i></span>
+      <span>
+        <span class="brand-text d-block">CodeWithJalandhar</span>
+        <small class="brand-subtext">Job-ready learning platform</small>
+      </span>
+    </a>
+    <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="mainNavbar">
+      <ul class="navbar-nav mx-auto align-items-xl-center gap-xl-2">
+        <li class="nav-item"><a class="nav-link{% if request.path == '/' %} active{% endif %}" href="{% url 'course_list' %}">Home</a></li>
+        <li class="nav-item"><a class="nav-link{% if 'course' in request.path and request.path != '/' %} active{% endif %}" href="{% url 'course_list' %}">Courses</a></li>
+        <li class="nav-item"><a class="nav-link{% if '/learn/' in request.path %} active{% endif %}" href="{% url 'lms:subject_list' %}">LMS</a></li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle{% if '/placements/' in request.path or '/exams/' in request.path %} active{% endif %}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Placement</a>
+          <ul class="dropdown-menu lms-dropdown shadow border-0">
+            <li><a class="dropdown-item" href="{% url 'placement:job_list' %}">Jobs</a></li>
+            <li><a class="dropdown-item" href="{% url 'placement:mock_interview_list' %}">Mock Interview</a></li>
+            <li><a class="dropdown-item" href="{% url 'exams:exam_list' %}">Placement Exams</a></li>
+          </ul>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle{% if '/classroom/' in request.path %} active{% endif %}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Classroom</a>
+          <ul class="dropdown-menu lms-dropdown shadow border-0">
+            <li><a class="dropdown-item" href="{% url 'classroom:class_list' %}">Live Classes</a></li>
+            <li><a class="dropdown-item" href="{% url 'classroom:class_list' %}">Recordings</a></li>
+            <li><a class="dropdown-item" href="{% url 'classroom:class_list' %}">Notes</a></li>
+          </ul>
+        </li>
+        <li class="nav-item"><a class="nav-link{% if '/dashboard/' in request.path %} active{% endif %}" href="{% url 'dashboard' %}">Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link{% if '/contact/' in request.path %} active{% endif %}" href="{% url 'contact' %}">Contact</a></li>
+      </ul>
+
+      <div class="d-flex flex-column flex-xl-row align-items-xl-center gap-3 ms-xl-3 navbar-actions">
+        <form class="search-pill" method="get" action="{% url 'search' %}">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="search" name="q" placeholder="Search courses or blogs">
+          <button type="submit" class="btn btn-sm btn-primary">Search</button>
+        </form>
+
+        {% if user.is_authenticated %}
+          <div class="dropdown">
+            <button class="btn user-menu-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <span class="user-pill">
+                <i class="fa-regular fa-user"></i> {{ user.username }}
+              </span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end lms-dropdown shadow border-0">
+              <li><a class="dropdown-item" href="{% url 'dashboard' %}">Dashboard</a></li>
+              <li><a class="dropdown-item" href="{% url 'lms:dashboard' %}">LMS Progress</a></li>
+              <li><a class="dropdown-item" href="{% url 'lms:scheduled_exam_list' %}">My Batch Exams</a></li>
+              <li><a class="dropdown-item" href="{% url 'placement:job_list' %}">Jobs</a></li>
+              <li><a class="dropdown-item" href="{% url 'classroom:class_list' %}">Live Classes</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <form method="post" action="{% url 'logout' %}" class="px-3 py-1">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-outline-dark btn-sm rounded-pill px-3 w-100">Logout</button>
+                </form>
+              </li>
+            </ul>
+          </div>
+        {% else %}
+          <div class="d-flex align-items-center gap-2">
+            <a class="btn btn-outline-dark btn-sm rounded-pill px-3" href="{% url 'login' %}">Login</a>
+            <a class="btn btn-primary btn-sm rounded-pill px-4" href="{% url 'signup' %}">Join Now</a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</nav>

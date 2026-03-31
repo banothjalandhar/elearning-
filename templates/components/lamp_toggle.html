@@ -1,0 +1,75 @@
+<div class="lamp-login-shell" data-lamp-shell>
+  <div class="lamp-scene" aria-hidden="true">
+    <div class="lamp-fixture">
+      <div class="lamp-cap"></div>
+      <div class="lamp-bulb-glow"></div>
+      <div class="lamp-bulb"></div>
+    </div>
+    <button
+      type="button"
+      class="lamp-cord-button"
+      data-lamp-toggle
+      aria-controls="lamp-login-panel"
+      aria-expanded="false"
+      aria-label="Pull lamp cord to toggle light and login panel"
+    >
+      <span class="lamp-cord-line"></span>
+      <span class="lamp-cord-handle"></span>
+    </button>
+  </div>
+
+  <div class="lamp-room-glow" aria-hidden="true"></div>
+
+  <section
+    id="lamp-login-panel"
+    class="lamp-login-panel"
+    data-login-panel
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="lamp-login-title"
+    aria-hidden="true"
+  >
+    <div class="lamp-login-card">
+      <span class="lamp-kicker">Interactive Access</span>
+      <h1 id="lamp-login-title" class="lamp-login-title">Pull the cord to light the room</h1>
+      <p class="lamp-login-copy">
+        When the lamp turns on, your existing Django login form appears without changing the authentication flow.
+      </p>
+
+      {% if messages %}
+        <div class="lamp-message-stack">
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags|default:'info' }} shadow-sm border-0 mb-2">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <form method="post" action="{% url 'login' %}" novalidate class="lamp-form">
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger shadow-sm border-0">{{ form.non_field_errors|striptags }}</div>
+        {% endif %}
+
+        {% for field in form %}
+          <div class="lamp-field">
+            <label for="{{ field.id_for_label }}" class="form-label fw-semibold">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}
+              <div class="text-danger small mt-1">{{ field.errors|striptags }}</div>
+            {% endif %}
+          </div>
+        {% endfor %}
+
+        <div class="lamp-actions">
+          <button type="submit" class="btn btn-primary w-100">Login</button>
+        </div>
+      </form>
+
+      <div class="lamp-login-links">
+        <a href="{% url 'password_reset' %}">Forgot password?</a>
+        <span class="lamp-link-divider"></span>
+        <a href="{% url 'signup' %}">Create account</a>
+      </div>
+    </div>
+  </section>
+</div>

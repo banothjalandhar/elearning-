@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}Create Exam{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row g-4">
+    <div class="col-lg-5">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+          <h1 class="h4 fw-bold mb-3">Create Exam</h1>
+          <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+              <div class="mb-3">
+                <label class="form-label fw-semibold">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}
+                  <div class="form-text">{{ field.help_text }}</div>
+                {% endif %}
+                {% if field.errors %}
+                  <div class="text-danger small">{{ field.errors|join:", " }}</div>
+                {% endif %}
+              </div>
+            {% endfor %}
+            <button class="btn btn-primary">Save Exam</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-7">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+          <h2 class="h5 fw-bold mb-3">Existing Exams</h2>
+          <div class="table-responsive">
+            <table class="table table-striped mb-0">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Category</th>
+                  <th>Duration</th>
+                  <th>Start</th>
+                  <th>Close</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for exam in exams %}
+                  <tr>
+                    <td>{{ exam.title }}</td>
+                    <td>{{ exam.get_category_display }}</td>
+                    <td>{{ exam.duration }} mins</td>
+                    <td>{% if exam.available_from %}{{ exam.available_from|date:"d M Y H:i" }}{% else %}-{% endif %}</td>
+                    <td>{% if exam.available_until %}{{ exam.available_until|date:"d M Y H:i" }}{% else %}-{% endif %}</td>
+                    <td>{% if exam.is_active %}Active{% else %}Inactive{% endif %}</td>
+                  </tr>
+                {% empty %}
+                  <tr><td colspan="6" class="text-center text-muted">No exams created yet.</td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

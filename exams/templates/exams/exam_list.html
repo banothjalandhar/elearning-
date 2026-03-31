@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+{% load exam_extras %}
+
+{% block title %}Placement Exams | CodeWithJalandhar{% endblock %}
+
+{% block content %}
+<section class="section-shell">
+  <div class="container">
+    <div class="exam-hero mb-5">
+      <div class="row align-items-center gy-4">
+        <div class="col-lg-8">
+          <span class="section-badge text-bg-light">Placement Exam Portal</span>
+          <h1 class="mt-3 fw-bold">Modern assessment space for placement preparation</h1>
+          <p class="mb-0 text-white-50">Take timed assessments across DSA, ADSA, aptitude, communication, and coding in a cleaner exam experience with a polished dashboard-like interface.</p>
+        </div>
+        <div class="col-lg-4 text-lg-end">
+          <a href="{% url 'exams:exam_history' %}" class="btn btn-light rounded-pill px-4">View History</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4 mb-5">
+      <div class="col-md-6 col-xl-4">
+        <div class="feature-card h-100">
+          <i class="fa-solid fa-brain"></i>
+          <h5>DSA Exam</h5>
+          <p class="text-muted mb-0">Sharpen logic, problem solving, and interview-level data structures concepts.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-xl-4">
+        <div class="feature-card h-100">
+          <i class="fa-solid fa-diagram-project"></i>
+          <h5>ADSA Exam</h5>
+          <p class="text-muted mb-0">Challenge yourself with advanced algorithms, optimization, and harder problem sets.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-xl-4">
+        <div class="feature-card h-100">
+          <i class="fa-solid fa-calculator"></i>
+          <h5>Aptitude Test</h5>
+          <p class="text-muted mb-0">Build speed and accuracy for quantitative, reasoning, and problem-solving rounds.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-xl-6">
+        <div class="feature-card h-100">
+          <i class="fa-solid fa-comments"></i>
+          <h5>Communication Test</h5>
+          <p class="text-muted mb-0">Improve verbal confidence, grammar, written clarity, and interview communication.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-xl-6">
+        <div class="feature-card h-100">
+          <i class="fa-solid fa-code"></i>
+          <h5>Coding Test</h5>
+          <p class="text-muted mb-0">Practice implementation-heavy rounds with coding questions and technical challenges.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-heading mb-4">
+      <span class="section-badge">Available Exams</span>
+      <h2 class="mt-3">Choose your next assessment</h2>
+      <p>These cards continue using your existing start, resume, auto submit, and result URLs while presenting a more premium interface.</p>
+    </div>
+
+    <div class="row g-4">
+      {% for exam in exams %}
+        {% with attempt=attempts|get_item:exam.id %}
+          <div class="col-md-6 col-xl-4 d-flex">
+            <div class="card exam-card-modern w-100">
+              <div class="card-body d-flex flex-column">
+                <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+                  <div class="exam-icon">
+                    {% if exam.category == "DSA" %}
+                      <i class="fa-solid fa-brain"></i>
+                    {% elif exam.category == "ADSA" %}
+                      <i class="fa-solid fa-diagram-project"></i>
+                    {% elif exam.category == "APTITUDE" %}
+                      <i class="fa-solid fa-calculator"></i>
+                    {% elif exam.category == "COMMUNICATION" %}
+                      <i class="fa-solid fa-comments"></i>
+                    {% else %}
+                      <i class="fa-solid fa-code"></i>
+                    {% endif %}
+                  </div>
+                  {% if attempt and attempt.submitted %}
+                    <span class="badge text-bg-success rounded-pill px-3 py-2">Completed</span>
+                  {% elif exam.is_upcoming %}
+                    <span class="badge text-bg-info rounded-pill px-3 py-2">Scheduled</span>
+                  {% elif exam.is_closed %}
+                    <span class="badge text-bg-dark rounded-pill px-3 py-2">Closed</span>
+                  {% elif attempt %}
+                    <span class="badge text-bg-warning rounded-pill px-3 py-2">In Progress</span>
+                  {% else %}
+                    <span class="badge text-bg-secondary rounded-pill px-3 py-2">Available</span>
+                  {% endif %}
+                </div>
+
+                <span class="meta-pill mb-3">{{ exam.get_category_display }}</span>
+                <h4 class="fw-bold mb-2">{{ exam.title }}</h4>
+                <p class="text-muted">Professional practice environment for placement preparation and timed performance improvement.</p>
+
+                <div class="exam-meta">
+                  <span class="meta-pill"><i class="fa-regular fa-clock"></i> {{ exam.duration }} mins</span>
+                  <span class="meta-pill"><i class="fa-solid fa-medal"></i> {{ exam.total_marks }} marks</span>
+                  <span class="meta-pill"><i class="fa-solid fa-list-check"></i> {{ exam.question_count }} questions</span>
+                </div>
+                {% if exam.available_from or exam.available_until %}
+                  <p class="text-muted small mt-3 mb-0">
+                    {% if exam.available_from %}Starts: {{ exam.available_from|date:"d M Y H:i" }}{% endif %}
+                    {% if exam.available_from and exam.available_until %} | {% endif %}
+                    {% if exam.available_until %}Closes: {{ exam.available_until|date:"d M Y H:i" }}{% endif %}
+                  </p>
+                {% endif %}
+
+                <div class="mt-auto">
+                  {% if attempt and attempt.submitted %}
+                    <a href="{% url 'exams:exam_result' %}?exam={{ exam.id }}" class="btn btn-success w-100 rounded-pill">View Result</a>
+                  {% elif exam.is_upcoming %}
+                    <button type="button" class="btn btn-info w-100 rounded-pill text-white" disabled>Starts Soon</button>
+                  {% elif exam.is_closed %}
+                    <button type="button" class="btn btn-dark w-100 rounded-pill" disabled>Closed</button>
+                  {% elif attempt %}
+                    <a href="{% url 'exams:exam_question' attempt.id %}" class="btn btn-warning w-100 rounded-pill">Resume Exam</a>
+                  {% else %}
+                    <a href="{% url 'exams:exam_start' exam.id %}" class="btn btn-primary w-100 rounded-pill">Start Exam</a>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endwith %}
+      {% empty %}
+        <div class="col-12">
+          <div class="cta-panel text-center">
+            <h3 class="fw-bold">No active exams right now</h3>
+            <p class="text-white-50 mb-4">You can still browse courses or revisit your exam history while new tests are being prepared.</p>
+            <div class="d-flex flex-wrap justify-content-center gap-3">
+              <a href="{% url 'course_list' %}" class="btn btn-light rounded-pill px-4">Browse Courses</a>
+              <a href="{% url 'exams:exam_history' %}" class="btn btn-outline-light rounded-pill px-4">Exam History</a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

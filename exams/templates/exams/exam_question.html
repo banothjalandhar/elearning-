@@ -1,0 +1,312 @@
+{% extends "base.html" %}
+
+{% block title %}{{ student_exam.exam.title }}{% endblock %}
+
+{% block content %}
+<div class="container py-4 exam-question-shell">
+  <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
+    <div>
+      <h1 class="h3 fw-bold mb-1">{{ student_exam.exam.title }}</h1>
+      <p class="text-muted mb-0">{{ student_exam.exam.get_category_display }} | Question {{ current_index }} of {{ total_questions }}</p>
+    </div>
+    <div class="d-flex align-items-center gap-3 flex-wrap">
+      <div class="alert alert-warning py-2 px-3 mb-0">
+        Time left: <strong id="timer">{{ remaining_seconds }}</strong>
+      </div>
+      <div class="alert alert-danger py-2 px-3 mb-0">
+        Warnings: <strong id="warning-count">{{ student_exam.warning_count }}</strong>/{{ max_warnings }}
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-3">
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+          <h2 class="h6 fw-bold">Webcam Check</h2>
+          <video id="webcam-preview" class="w-100 rounded bg-dark" autoplay muted playsinline></video>
+          <p id="webcam-status" class="small text-muted mt-2 mb-0">Checking camera access...</p>
+        </div>
+      </div>
+      <div class="card border-0 shadow-sm">
+        <div class="card-body">
+          <h2 class="h6 fw-bold">Questions</h2>
+          <div class="d-flex flex-wrap gap-2">
+            {% for item in questions %}
+              <a href="{% url 'exams:exam_question' student_exam.id %}?q={{ forloop.counter }}" class="btn btn-sm {% if item.id == question.id %}btn-primary{% elif item.id in answered_question_ids %}btn-success{% else %}btn-outline-secondary{% endif %}">
+                {{ forloop.counter }}
+              </a>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-9">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+          <div id="warning-banner" class="alert alert-danger d-none"></div>
+          <h2 class="h5 fw-bold mb-3">Question {{ current_index }}</h2>
+          <p class="fs-5">{{ question.question_text|linebreaksbr }}</p>
+          <p class="text-muted small">Marks: {{ question.marks }} | Type: {{ question.get_question_type_display }}</p>
+
+          <form method="post" id="answer-form">
+            {% csrf_token %}
+            {% for field in form %}
+              <div class="mb-3">
+                <label class="form-label fw-semibold">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                  <div class="text-danger small mt-1">{{ field.errors|join:", " }}</div>
+                {% endif %}
+              </div>
+            {% endfor %}
+            <div class="d-flex flex-wrap gap-2">
+              {% if current_index > 1 %}
+                <button type="submit" name="previous_question" class="btn btn-outline-secondary">Previous</button>
+              {% endif %}
+              <button type="submit" class="btn btn-outline-primary">Save</button>
+              {% if current_index < total_questions %}
+                <button type="submit" name="next_question" class="btn btn-primary">Save & Next</button>
+              {% endif %}
+              <button type="submit" name="submit_exam" class="btn btn-danger ms-lg-auto">Submit Exam</button>
+            </div>
+          </form>
+
+          <form method="post" action="{% url 'exams:exam_submit' %}" id="hidden-submit-form" class="d-none">
+            {% csrf_token %}
+            <input type="hidden" name="student_exam_id" value="{{ student_exam.id }}">
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const studentExamId = "{{ student_exam.id }}";
+  const questionId = "{{ question.id }}";
+  let remainingSeconds = Number("{{ remaining_seconds }}");
+  let tabSwitchCount = Number("{{ student_exam.warning_count }}");
+  const maxTabSwitch = Number("{{ max_warnings }}");
+  let isExamSubmitted = false;
+  let tabSwitchLocked = false;
+  let ignoreVisibilityChange = false;
+  const timerEl = document.getElementById("timer");
+  const warningEl = document.getElementById("warning-count");
+  const warningBanner = document.getElementById("warning-banner");
+  const answerForm = document.getElementById("answer-form");
+  const hiddenSubmitForm = document.getElementById("hidden-submit-form");
+  const webcamPreview = document.getElementById("webcam-preview");
+  const webcamStatus = document.getElementById("webcam-status");
+  let autoSaveHandle = null;
+  let webcamWarningSent = false;
+  let webcamStream = null;
+  let warningRequestInFlight = false;
+
+  function formatTime(seconds) {
+    const hrs = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    return `${String(hrs).padStart(2, "0")}:${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+  }
+
+  function updateTimer() {
+    if (isExamSubmitted) {
+      return;
+    }
+    timerEl.textContent = formatTime(Math.max(remainingSeconds, 0));
+    if (remainingSeconds <= 0) {
+      submitExamOnce();
+      return;
+    }
+    remainingSeconds -= 1;
+    window.setTimeout(updateTimer, 1000);
+  }
+
+  function submitExamOnce() {
+    if (isExamSubmitted) {
+      return;
+    }
+    ignoreVisibilityChange = true;
+    isExamSubmitted = true;
+    hiddenSubmitForm.submit();
+  }
+
+  function getCsrfToken() {
+    return document.querySelector("[name=csrfmiddlewaretoken]").value;
+  }
+
+  function scheduleAutoSave() {
+    window.clearTimeout(autoSaveHandle);
+    autoSaveHandle = window.setTimeout(runAutoSave, 700);
+  }
+
+  async function runAutoSave() {
+    try {
+      const formData = new FormData();
+      formData.append("csrfmiddlewaretoken", getCsrfToken());
+      formData.append("question_id", questionId);
+
+      const selectedOption = document.querySelector("input[name=selected_option]:checked");
+      if (selectedOption) {
+        formData.append("selected_option", selectedOption.value);
+      }
+
+      const textAnswer = document.querySelector("textarea[name=text_answer]");
+      if (textAnswer) {
+        formData.append("text_answer", textAnswer.value);
+      }
+
+      const codeAnswer = document.querySelector("textarea[name=code_answer]");
+      if (codeAnswer) {
+        formData.append("code_answer", codeAnswer.value);
+      }
+
+      const language = document.querySelector("select[name=programming_language]");
+      if (language) {
+        formData.append("programming_language", language.value);
+      }
+
+      await fetch(`/exams/autosave/${studentExamId}/`, {
+        method: "POST",
+        credentials: "same-origin",
+        headers: {
+          "X-CSRFToken": getCsrfToken()
+        },
+        body: formData
+      });
+    } catch (error) {
+      console.log("autosave skipped");
+    }
+  }
+
+  async function sendWarning() {
+    if (isExamSubmitted || warningRequestInFlight) {
+      return;
+    }
+
+    warningRequestInFlight = true;
+
+    try {
+      const formData = new FormData();
+      formData.append("csrfmiddlewaretoken", getCsrfToken());
+
+      const response = await fetch(`/exams/warning/${studentExamId}/`, {
+        method: "POST",
+        credentials: "same-origin",
+        headers: {
+          "X-CSRFToken": getCsrfToken()
+        },
+        body: formData
+      });
+      const data = await response.json();
+      if (data.redirect_url) {
+        window.location.href = data.redirect_url;
+        return;
+      }
+      warningBanner.textContent = data.message;
+      warningBanner.classList.remove("d-none");
+      if (data.warning_count !== undefined) {
+        tabSwitchCount = Number(data.warning_count);
+        warningEl.textContent = data.warning_count;
+      }
+      if (data.status === "submitted") {
+        isExamSubmitted = true;
+      }
+    } catch (error) {
+      console.log("warning sync failed");
+    } finally {
+      warningRequestInFlight = false;
+    }
+  }
+
+  document.addEventListener("contextmenu", event => event.preventDefault());
+  document.addEventListener("copy", event => event.preventDefault());
+  document.addEventListener("cut", event => event.preventDefault());
+  document.addEventListener("paste", event => event.preventDefault());
+
+  async function startWebcamCheck() {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      webcamStatus.textContent = "Webcam is not supported in this browser.";
+      return;
+    }
+
+    try {
+      webcamStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+      webcamPreview.srcObject = webcamStream;
+      webcamStatus.textContent = "Webcam is active.";
+
+      const [videoTrack] = webcamStream.getVideoTracks();
+      if (videoTrack) {
+        videoTrack.addEventListener("ended", () => {
+          webcamStatus.textContent = "Camera turned off. Warning recorded.";
+          if (!webcamWarningSent && !isExamSubmitted) {
+            webcamWarningSent = true;
+            sendWarning();
+          }
+        });
+      }
+    } catch (error) {
+      console.log("webcam unavailable");
+      webcamStatus.textContent = "Camera is off or blocked. Warning recorded.";
+      if (!webcamWarningSent && !isExamSubmitted) {
+        webcamWarningSent = true;
+        sendWarning();
+      }
+    }
+  }
+
+  document.addEventListener("visibilitychange", () => {
+    if (isExamSubmitted || ignoreVisibilityChange) {
+      return;
+    }
+
+    if (document.hidden && !tabSwitchLocked) {
+      tabSwitchLocked = true;
+      console.log("tab changed");
+      tabSwitchCount += 1;
+      warningEl.textContent = tabSwitchCount;
+      if (tabSwitchCount > maxTabSwitch) {
+        console.log("tab switch limit reached");
+      }
+      sendWarning();
+      return;
+    }
+
+    if (!document.hidden) {
+      tabSwitchLocked = false;
+    }
+  });
+
+  answerForm.querySelectorAll("input, textarea, select").forEach((element) => {
+    element.addEventListener("input", scheduleAutoSave);
+    element.addEventListener("change", scheduleAutoSave);
+  });
+
+  answerForm.addEventListener("submit", () => {
+    ignoreVisibilityChange = true;
+  });
+
+  hiddenSubmitForm.addEventListener("submit", () => {
+    ignoreVisibilityChange = true;
+    isExamSubmitted = true;
+  });
+
+  document.querySelectorAll('a[href]').forEach((link) => {
+    link.addEventListener("click", () => {
+      ignoreVisibilityChange = true;
+    });
+  });
+
+  window.addEventListener("pagehide", () => {
+    ignoreVisibilityChange = true;
+    if (webcamStream) {
+      webcamStream.getTracks().forEach((track) => track.stop());
+    }
+  });
+
+  startWebcamCheck();
+  updateTimer();
+</script>
+{% endblock %}

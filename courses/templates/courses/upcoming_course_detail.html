@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>{{ course.title }}</h1>
+
+{% if course.image %}
+    <img src="{{ course.image.url }}" alt="{{ course.title }}" style="max-width: 400px;">
+{% endif %}
+
+<p>{{ course.description }}</p>
+<p>Starting from: {{ course.start_date|date:"F j, Y, g:i a" }}</p>
+<p>Price: ₹{{ course.price }}</p>
+{% if course.video_url %}
+    <p>Watch preview: <a href="{{ course.video_url }}" target="_blank">Video Link</a></p>
+{% endif %}
+<a href="{% url 'upcoming_course_list' %}">Back to Upcoming Courses</a>
+{% endblock %}

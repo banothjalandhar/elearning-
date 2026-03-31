@@ -1,0 +1,222 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Home | CodeWithJalandhar{% endblock %}
+
+{% block content %}
+<section class="hero-section">
+  <div class="container">
+    <div class="row align-items-center gy-5">
+      <div class="col-lg-6">
+        <span class="section-badge">Udemy-style Learning. Coursera-style Outcomes.</span>
+        <h1 class="hero-title">Learn Job Ready Skills</h1>
+        <p class="hero-subtitle">Master Python, Java, DSA, placement preparation, and interview-ready practice through structured batches, live classrooms, and guided assessment paths.</p>
+        <div class="d-flex flex-wrap gap-3">
+          <a href="#courses-section" class="btn btn-primary btn-lg rounded-pill px-4">Explore Courses</a>
+          <a href="{% url 'exams:exam_list' %}" class="btn btn-outline-light btn-lg rounded-pill px-4">Start Exam</a>
+          <a href="{% url 'upcoming_course_list' %}" class="btn btn-glass btn-lg rounded-pill px-4">Join Batch</a>
+        </div>
+        <div class="hero-stat-strip">
+          <div class="hero-stat">
+            <strong>5000+</strong>
+            <span>students learning with us</span>
+          </div>
+          <div class="hero-stat">
+            <strong>95%</strong>
+            <span>placement-focused training</span>
+          </div>
+          <div class="hero-stat">
+            <strong>Live</strong>
+            <span>classes, notes, and recordings</span>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="hero-visual">
+          <div class="hero-card hero-card-main">
+            <h5 class="fw-bold mb-3">From course discovery to placement momentum</h5>
+            <p class="mb-0 text-white-50">A premium LMS experience with modern discovery, practical learning paths, placement exams, live classrooms, and a growing placement portal.</p>
+          </div>
+          <div class="hero-card hero-card-accent">
+            <span><i class="fa-solid fa-chart-line"></i> 95% placement support</span>
+          </div>
+          <div class="hero-card hero-card-outline">
+            <span><i class="fa-solid fa-users"></i> 5000+ students learning</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-shell">
+  <div class="container">
+    <div class="section-heading text-center mx-auto">
+      <span class="section-badge">Why Students Choose Us</span>
+      <h2 class="mt-3">Structured learning with results that matter</h2>
+      <p>Everything is designed to help students move from fundamentals to interview confidence through guided content, active practice, and placement preparation.</p>
+    </div>
+    <div class="row g-4">
+      <div class="col-6 col-lg-3">
+        <div class="stats-card text-center">
+          <div class="stats-icon mx-auto"><i class="fa-solid fa-user-graduate"></i></div>
+          <div class="stats-value">5000+</div>
+          <div class="stats-label">Students</div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="stats-card text-center">
+          <div class="stats-icon mx-auto"><i class="fa-solid fa-book-open-reader"></i></div>
+          <div class="stats-value">100+</div>
+          <div class="stats-label">Courses</div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="stats-card text-center">
+          <div class="stats-icon mx-auto"><i class="fa-solid fa-briefcase"></i></div>
+          <div class="stats-value">95%</div>
+          <div class="stats-label">Placement</div>
+        </div>
+      </div>
+        <div class="col-6 col-lg-3">
+          <div class="stats-card text-center">
+            <div class="stats-icon mx-auto"><i class="fa-solid fa-layer-group"></i></div>
+            <div class="stats-value">Live</div>
+            <div class="stats-label">Classes Daily</div>
+          </div>
+        </div>
+      </div>
+  </div>
+</section>
+
+<section id="courses-section" class="section-shell pt-0">
+  <div class="container">
+    <div class="showcase-panel">
+      <div class="d-flex flex-column flex-lg-row align-items-lg-end justify-content-between gap-3 mb-4">
+        <div class="section-heading mb-0">
+          <span class="section-badge">Popular Programs</span>
+          <h2 class="mt-3">Upgrade with industry-ready courses</h2>
+          <p>Professional course cards, cleaner layout, and a more modern browsing experience without changing your backend course flow.</p>
+        </div>
+        <a href="{% url 'upcoming_course_list' %}" class="btn btn-outline-dark rounded-pill px-4">View Upcoming Batches</a>
+      </div>
+
+      <div class="row g-4">
+        {% for course in courses %}
+          <div class="col-sm-6 col-xl-4 d-flex">
+            <div class="course-card-modern w-100">
+              <div class="course-card-media">
+                {% if course.image %}
+                  <img src="{{ course.image.url }}" alt="{{ course.title }}">
+                {% elif course.title|lower == "python" %}
+                  <img src="{% static 'images/python.jpg' %}" alt="{{ course.title }}">
+                {% elif course.title|lower == "java" %}
+                  <img src="{% static 'images/java.png' %}" alt="{{ course.title }}">
+                {% else %}
+                  <img src="{% static 'images/course-placeholder.svg' %}" alt="{{ course.title }}">
+                {% endif %}
+              </div>
+              <div class="course-card-body d-flex flex-column">
+                <div class="d-flex justify-content-between align-items-center gap-2 mb-3">
+                  <span class="rating-pill"><i class="fa-solid fa-star text-warning"></i> 4.8 Rating</span>
+                  <span class="meta-pill"><i class="fa-solid fa-users"></i> 1200+ Students</span>
+                </div>
+                <h4 class="fw-bold mb-2">{{ course.title|title }}</h4>
+                <p class="card-desc">
+                  {{ course.description|default:"Learn coding with expert instructors and real-world practice."|truncatechars:110 }}
+                </p>
+                <div class="d-flex justify-content-between align-items-center mt-auto pt-3">
+                  <span class="price-text">Rs. {{ course.price }}</span>
+                  <a href="{% url 'course_detail' course.id %}" class="btn btn-primary rounded-pill px-4">View Course</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% empty %}
+          <div class="col-12">
+            <div class="cta-panel text-center">
+              <h3 class="fw-bold">New programs are on the way</h3>
+              <p class="text-white-50 mb-4">No courses are available right now, but you can still explore exams or join an upcoming batch.</p>
+              <div class="d-flex flex-wrap justify-content-center gap-3">
+                <a href="{% url 'exams:exam_list' %}" class="btn btn-light rounded-pill px-4">Placement Exams</a>
+                <a href="{% url 'upcoming_course_list' %}" class="btn btn-outline-light rounded-pill px-4">Upcoming Batches</a>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-shell pt-0">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-md-6 col-xl-3">
+        <div class="feature-card">
+          <i class="fa-solid fa-laptop-code"></i>
+          <h5>Practical Coding</h5>
+          <p class="mb-0 text-muted">Hands-on lessons focused on Python, Java, and DSA problem solving.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-xl-3">
+        <div class="feature-card">
+          <i class="fa-solid fa-file-circle-check"></i>
+          <h5>Mock Tests</h5>
+          <p class="mb-0 text-muted">Timed assessments that mirror real placement rounds and screening exams.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-xl-3">
+        <div class="feature-card">
+          <i class="fa-solid fa-people-group"></i>
+          <h5>Live Batches</h5>
+          <p class="mb-0 text-muted">Join guided cohorts with focused goals, schedules, and mentor support.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-xl-3">
+        <div class="feature-card">
+          <i class="fa-solid fa-trophy"></i>
+          <h5>Placement Prep</h5>
+          <p class="mb-0 text-muted">Interview-oriented learning that helps students build confidence and momentum.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-shell pt-0">
+  <div class="container">
+    <div class="section-heading">
+      <span class="section-badge">Student Success</span>
+      <h2 class="mt-3">Testimonials from learners and placed students</h2>
+      <p>Social proof matters for an LMS, so this section brings in the polish users expect from modern learning platforms.</p>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-6 col-xl-4">
+        <div class="testimonial-card">
+          <div class="testimonial-avatar"><i class="fa-solid fa-user"></i></div>
+          <h5 class="fw-bold">Aditi Sharma</h5>
+          <p class="text-primary fw-semibold">Placed after DSA + Mock Test Training</p>
+          <blockquote class="mb-0">The structured roadmap and regular placement exams helped me improve speed, consistency, and interview confidence.</blockquote>
+        </div>
+      </div>
+      <div class="col-md-6 col-xl-4">
+        <div class="testimonial-card">
+          <div class="testimonial-avatar"><i class="fa-solid fa-user-tie"></i></div>
+          <h5 class="fw-bold">Rahul Verma</h5>
+          <p class="text-primary fw-semibold">Full Stack Learner</p>
+          <blockquote class="mb-0">The platform feels much more professional now, and the courses are easy to browse on both mobile and desktop.</blockquote>
+        </div>
+      </div>
+      <div class="col-md-6 col-xl-4">
+        <div class="testimonial-card">
+          <div class="testimonial-avatar"><i class="fa-solid fa-award"></i></div>
+          <h5 class="fw-bold">Sneha Patel</h5>
+          <p class="text-primary fw-semibold">Placement Batch Student</p>
+          <blockquote class="mb-0">What stood out most was the combination of live batches, clear lessons, and mock exams that actually matched placement patterns.</blockquote>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

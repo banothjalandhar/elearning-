@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}{{ subject.name }} Topics | CodeWithJalandhar{% endblock %}
+
+{% block content %}
+<section class="section-shell">
+  <div class="container">
+    <div class="dashboard-panel">
+      <div class="dashboard-panel-heading">
+        <span class="section-badge">{{ subject.name }}</span>
+        <h1 class="mt-3">{{ subject.name }} learning roadmap</h1>
+        <p class="text-muted mb-0">{{ subject.description }}</p>
+      </div>
+      <div class="row g-4 mt-1">
+        {% for topic in topics %}
+          <div class="col-lg-6">
+            <div class="dashboard-card h-100">
+              <div>
+                <span class="meta-pill mb-2 d-inline-flex"><i class="fa-solid fa-layer-group"></i> Topic {{ topic.order }}</span>
+                <h3 class="h5">{{ topic.name }}</h3>
+                <p class="text-muted mb-0">{{ topic.subtopics.count }} subtopics and {{ topic.tests.count }} tests</p>
+              </div>
+              <div class="mt-4 d-flex gap-2 flex-wrap">
+                <a href="{% url 'lms:topic_detail' topic.id %}" class="btn btn-primary px-4">View Topic</a>
+                {% with first_subtopic=topic.subtopics.first %}
+                  {% if first_subtopic %}
+                    <a href="{% url 'lms:content_detail' first_subtopic.id %}" class="btn btn-outline-dark px-4">Start Learning</a>
+                  {% endif %}
+                {% endwith %}
+              </div>
+            </div>
+          </div>
+        {% empty %}
+          <div class="col-12">
+            <div class="dashboard-card">
+              <p class="mb-0 text-muted">Topics will appear here once they are added by admin.</p>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,60 @@
+<footer class="site-footer">
+  <div class="container">
+    <div class="row g-4 g-xl-5">
+      <div class="col-lg-4">
+        <div class="footer-brand mb-3">
+          <span class="brand-mark"><i class="fa-solid fa-graduation-cap"></i></span>
+          <div>
+            <span class="brand-text d-block">CodeWithJalandhar</span>
+            <small class="brand-subtext text-white-50">Learn like a modern LMS</small>
+          </div>
+        </div>
+        <p class="footer-copy mb-3">
+          Build job-ready skills with guided courses, placement exams, live classes, and a placement portal designed to move students from learning to hiring outcomes.
+        </p>
+        <div class="footer-socials d-flex gap-3">
+          <a href="https://www.youtube.com/@codewithjalandhar" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+          <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="https://www.linkedin.com/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+        </div>
+      </div>
+      <div class="col-6 col-md-3 col-lg-2">
+        <h6>Platform</h6>
+        <ul class="footer-links">
+          <li><a href="{% url 'course_list' %}">Home</a></li>
+          <li><a href="{% url 'course_list' %}">Courses</a></li>
+          <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+          <li><a href="{% url 'placement:job_list' %}">Placement Portal</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-md-3 col-lg-2">
+        <h6>Learning</h6>
+        <ul class="footer-links">
+          <li><a href="{% url 'upcoming_course_list' %}">Join Batch</a></li>
+          <li><a href="{% url 'classroom:class_list' %}">Live Classes</a></li>
+          <li><a href="{% url 'classroom:class_list' %}">Live Classroom</a></li>
+          <li><a href="{% url 'classroom:whiteboard' %}">Whiteboard</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-md-3 col-lg-2">
+        <h6>Placement</h6>
+        <ul class="footer-links">
+          <li><a href="{% url 'placement:job_list' %}">Jobs</a></li>
+          <li><a href="{% url 'placement:mock_interview_list' %}">Mock Interview</a></li>
+          <li><a href="{% url 'exams:exam_list' %}">Placement Exams</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-md-3 col-lg-2">
+        <h6>Contact</h6>
+        <ul class="footer-links">
+          <li><a href="{% url 'contact' %}">Contact Us</a></li>
+          <li><a href="{% url 'login' %}">Student Login</a></li>
+          <li><a href="mailto:hello@codewithjalandhar.com">hello@codewithjalandhar.com</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="mb-0">&copy; 2026 CodeWithJalandhar. Courses, exams, live classes, and placement support in one learning platform.</p>
+    </div>
+  </div>
+</footer>

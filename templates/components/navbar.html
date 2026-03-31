@@ -1,0 +1,51 @@
+<nav class="ui-navbar">
+  <div class="ui-navbar-inner">
+    <a class="ui-brand" href="{% url 'course_list' %}">
+      <span class="ui-brand-mark"><i class="fa-solid fa-graduation-cap"></i></span>
+      <span class="ui-brand-copy">
+        <span class="ui-brand-title">CodeWithJalandhar</span>
+        <span class="ui-brand-subtitle">Job-ready learning platform</span>
+      </span>
+    </a>
+
+    <button class="ui-nav-toggle" type="button" data-nav-toggle aria-label="Toggle navigation" aria-expanded="false">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <div class="ui-nav-panel" data-nav-panel>
+      <ul class="ui-nav-links">
+        <li><a class="ui-nav-link{% if request.path == '/' %} is-active{% endif %}" href="{% url 'course_list' %}">Home</a></li>
+        <li><a class="ui-nav-link{% if 'course' in request.path and request.path != '/' %} is-active{% endif %}" href="{% url 'course_list' %}">Courses</a></li>
+        <li><a class="ui-nav-link{% if '/learn/' in request.path %} is-active{% endif %}" href="{% url 'lms:subject_list' %}">LMS</a></li>
+        <li><a class="ui-nav-link{% if '/exams/' in request.path %} is-active{% endif %}" href="{% url 'exams:exam_list' %}">Exams</a></li>
+        <li><a class="ui-nav-link{% if '/classroom/' in request.path %} is-active{% endif %}" href="{% url 'classroom:class_list' %}">Live Classes</a></li>
+        <li><a class="ui-nav-link{% if '/placements/' in request.path %} is-active{% endif %}" href="{% url 'placement:job_list' %}">Placements</a></li>
+        <li><a class="ui-nav-link{% if '/contact/' in request.path %} is-active{% endif %}" href="{% url 'contact' %}">Contact</a></li>
+      </ul>
+
+      <div class="ui-nav-actions">
+        <form class="ui-nav-search" method="get" action="{% url 'search' %}">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="search" name="q" placeholder="Search courses or blogs">
+        </form>
+
+        {% if user.is_authenticated %}
+          <div class="ui-user-actions">
+            <a class="ui-nav-pill" href="{% url 'dashboard' %}">{{ user.username }}</a>
+            <form method="post" action="{% url 'logout' %}">
+              {% csrf_token %}
+              <button type="submit" class="ui-nav-btn ui-nav-btn-secondary">Logout</button>
+            </form>
+          </div>
+        {% else %}
+          <div class="ui-guest-actions">
+            <a id="loginBtn" href="{% url 'login' %}" class="ui-nav-btn ui-nav-btn-secondary" data-auth-open="login">Login</a>
+            <a id="signupBtn" href="{% url 'signup' %}" class="ui-nav-btn ui-nav-btn-primary" data-auth-open="signup">Join Now</a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</nav>

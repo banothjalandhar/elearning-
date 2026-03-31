@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+.course-img-small {
+    max-height: 180px;
+    width: 100%;
+    object-fit: contain;
+    background-color: rgba(248, 249, 250, 0.6); /* semi-transparent */
+    border-top-left-radius: 0.8rem;
+    border-top-right-radius: 0.8rem;
+}
+
+/* Glass effect card */
+.glass-card {
+    background: rgba(255, 255, 255, 0.25); /* translucent */
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 0.8rem;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    transition: all 0.3s ease-in-out;
+}
+
+.glass-card:hover {
+    box-shadow: 0 12px 36px 0 rgba(31, 38, 135, 0.5);
+    transform: translateY(-5px);
+}
+</style>
+
+<h1>Upcoming Courses</h1>
+
+<div class="row">
+    {% for course in upcoming_courses %}
+        <div class="col-md-4 mb-4">
+            <div class="card glass-card">
+                {% if course.image %}
+                    <img src="{{ course.image.url }}" class="card-img-top course-img-small" alt="{{ course.title }}">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ course.title }}</h5>
+                    <p class="card-text">{{ course.description|truncatechars:100 }}</p>
+                    <p>Starts on: {{ course.start_date|date:"F j, Y, g:i a" }}</p>
+                    <p>Price: ₹{{ course.price }}</p>
+                    <a href="{% url 'upcoming_course_detail' course.id %}" class="btn btn-primary">View Details</a>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <p>No upcoming courses at the moment. Please check back later.</p>
+    {% endfor %}
+</div>
+
+{% endblock %}

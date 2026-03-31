@@ -1,0 +1,44 @@
+<div class="section-heading mb-4">
+  <span class="section-badge">Live Classroom</span>
+  <h2 class="mt-3">Today, next, and recordings</h2>
+  <p>Your live class summary is now available directly inside the dashboard.</p>
+</div>
+
+<div class="row g-4 mb-5">
+  <div class="col-md-4">
+    <div class="dashboard-card h-100">
+      <h5 class="mb-2">Today's Class</h5>
+      {% if todays_class %}
+        <p class="fw-semibold mb-1">{{ todays_class.title }}</p>
+        <p class="text-muted mb-3">{{ todays_class.subject }} | {{ todays_class.time|time:"h:i A" }}{% if todays_class.course %} | {{ todays_class.course.title }}{% endif %}</p>
+        <a href="{% url 'classroom:class_detail' todays_class.id %}" class="btn btn-outline-dark rounded-pill px-4">View Class</a>
+      {% else %}
+        <p class="text-muted mb-0">No class scheduled for today.</p>
+      {% endif %}
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="dashboard-card h-100">
+      <h5 class="mb-2">Upcoming Class</h5>
+      {% if upcoming_class %}
+        <p class="fw-semibold mb-1">{{ upcoming_class.title }}</p>
+        <p class="text-muted mb-3">{{ upcoming_class.date|date:"d M Y" }} | {{ upcoming_class.time|time:"h:i A" }}{% if upcoming_class.course %} | {{ upcoming_class.course.title }}{% endif %}</p>
+        <a href="{% url 'classroom:class_detail' upcoming_class.id %}" class="btn btn-outline-dark rounded-pill px-4">See Schedule</a>
+      {% else %}
+        <p class="text-muted mb-0">No upcoming active class found.</p>
+      {% endif %}
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="dashboard-card h-100">
+      <h5 class="mb-2">Last Recording</h5>
+      {% if last_recording %}
+        <p class="fw-semibold mb-1">{{ last_recording.title }}</p>
+        <p class="text-muted mb-3">{{ last_recording.date|date:"d M Y" }}{% if last_recording.course %} | {{ last_recording.course.title }}{% endif %}</p>
+        <a href="{% url 'classroom:watch_recording' last_recording.id %}" class="btn btn-outline-dark rounded-pill px-4">Watch</a>
+      {% else %}
+        <p class="text-muted mb-0">No recording available yet.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>

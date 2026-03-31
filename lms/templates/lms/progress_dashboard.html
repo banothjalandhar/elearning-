@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block title %}LMS Dashboard | CodeWithJalandhar{% endblock %}
+
+{% block content %}
+<section class="section-shell">
+  <div class="container">
+    <div class="dashboard-hero mb-4">
+      <div class="row align-items-center gy-4">
+        <div class="col-lg-8">
+          <span class="section-badge text-bg-light">Learning Dashboard</span>
+          <h1 class="mt-3 fw-bold">Track topics, tests, and batch-restricted exams</h1>
+          <p class="mb-0 text-white-50">This dashboard extends the current system without replacing your existing course, payment, or classroom flows.</p>
+        </div>
+        <div class="col-lg-4 text-lg-end">
+          <a href="{% url 'lms:subject_list' %}" class="btn btn-light rounded-pill px-4">Browse Subjects</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-md-3">
+        <div class="summary-card h-100">
+          <h6>Enrolled Courses</h6>
+          <h3 class="fw-bold mb-1">{{ enrollments|length }}</h3>
+          <p class="text-muted mb-0">Existing paid courses remain available</p>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="summary-card h-100">
+          <h6>Completed Topics</h6>
+          <h3 class="fw-bold mb-1">{{ completed_topics }}</h3>
+          <p class="text-muted mb-0">Marked complete after test submission</p>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="summary-card h-100">
+          <h6>Progress</h6>
+          <h3 class="fw-bold mb-1">{{ progress_percentage }}%</h3>
+          <p class="text-muted mb-0">Overall LMS completion</p>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="summary-card h-100">
+          <h6>Batch</h6>
+          <h3 class="fw-bold mb-1">{% if user.batch %}Assigned{% else %}Pending{% endif %}</h3>
+          <p class="text-muted mb-0">{% if user.batch %}{{ user.batch.name }}{% else %}Ask admin for exam access{% endif %}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4 mt-1">
+      <div class="col-xl-7">
+        <div class="dashboard-panel">
+          <div class="dashboard-panel-heading">
+            <span class="section-badge">Topic Progress</span>
+            <h3 class="mt-3">Completed and in-progress topics</h3>
+          </div>
+          <div class="dashboard-mini-list">
+            {% for record in progress_records %}
+              <div class="mini-row">
+                <div>
+                  <div class="fw-semibold">{{ record.topic.subject.name }} / {{ record.topic.name }}</div>
+                  <div class="small text-muted">{% if record.completed %}Completed{% else %}In progress{% endif %}</div>
+                </div>
+                <span class="badge text-bg-light">{{ record.score }}%</span>
+              </div>
+            {% empty %}
+              <p class="text-muted mb-0">Your topic progress will appear here after you submit a test.</p>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      <div class="col-xl-5">
+        <div class="dashboard-panel">
+          <div class="dashboard-panel-heading">
+            <span class="section-badge">Recent Tests</span>
+            <h3 class="mt-3">Latest results</h3>
+          </div>
+          <div class="dashboard-mini-list">
+            {% for result in recent_tests %}
+              <div class="mini-row">
+                <div>
+                  <div class="fw-semibold">{{ result.test.title }}</div>
+                  <div class="small text-muted">{{ result.test.topic.name }}</div>
+                </div>
+                <span class="badge text-bg-light">{{ result.score }}/{{ result.total }}</span>
+              </div>
+            {% empty %}
+              <p class="text-muted mb-0">Your most recent topic test scores will show here.</p>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4 mt-1">
+      <div class="col-12">
+        <div class="dashboard-panel">
+          <div class="dashboard-panel-heading">
+            <span class="section-badge">Scheduled Exams</span>
+            <h3 class="mt-3">Batch-based access only</h3>
+          </div>
+          <div class="row g-4">
+            {% for exam in scheduled_exams %}
+              <div class="col-md-6 col-xl-4">
+                <div class="dashboard-card h-100">
+                  <h4 class="h6">{{ exam.title }}</h4>
+                  <p class="text-muted small">{{ exam.subject.name }} / {{ exam.batch.name }}</p>
+                  <p class="small mb-3">{{ exam.start_time|date:"d M Y h:i A" }} to {{ exam.end_time|date:"d M Y h:i A" }}</p>
+                  <a href="{% url 'lms:scheduled_exam_detail' exam.id %}" class="btn btn-outline-dark btn-sm">View Exam</a>
+                </div>
+              </div>
+            {% empty %}
+              <div class="col-12">
+                <p class="text-muted mb-0">No scheduled exams are available for your batch right now.</p>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-6">
+      <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+          <h2 class="fw-bold mb-3">Buy {{ course.title }} - Rs. {{ course.price }}</h2>
+          <p class="text-muted">Your existing course UI stays the same. This checkout now uses Stripe Checkout with env-based keys and safer success/cancel handling.</p>
+
+          {% if not stripe_ready %}
+            <div class="alert alert-warning mb-0">
+              Payment gateway is not configured yet. Add Stripe keys in `.env` to enable checkout.
+            </div>
+          {% else %}
+            <button id="checkout-button" class="btn btn-primary w-100">Proceed to Secure Checkout</button>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+  {% if stripe_ready %}
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+      function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) {
+          return parts.pop().split(";").shift();
+        }
+        return "";
+      }
+
+      const stripe = Stripe("{{ stripe_pub_key }}");
+      const checkoutButton = document.getElementById("checkout-button");
+
+      checkoutButton.addEventListener("click", async function () {
+        const response = await fetch("{% url 'payments:create_checkout_session' course.id %}", {
+          method: "POST",
+          credentials: "same-origin",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCookie("csrftoken")
+          }
+        });
+        const data = await response.json();
+        if (data.sessionId) {
+          stripe.redirectToCheckout({ sessionId: data.sessionId });
+          return;
+        }
+        alert(data.error || "Unable to start payment.");
+      });
+    </script>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Upload Exam Excel{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-7">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4 p-lg-5">
+          <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+            <div>
+              <h1 class="h4 fw-bold mb-1">Upload Questions from Excel</h1>
+              <p class="text-muted mb-0">Import MCQ questions without changing the existing exam system.</p>
+            </div>
+            <a href="{% url 'exams:admin_question_create' %}" class="btn btn-outline-secondary">Back to Question Admin</a>
+          </div>
+
+          <div class="alert alert-info">
+            Required columns: <strong>exam, question, option1, option2, option3, option4, correct</strong>. The selected exam dropdown is the target exam for every imported row.
+          </div>
+
+          <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% for field in form %}
+              <div class="mb-3">
+                <label class="form-label fw-semibold">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}
+                  <div class="form-text">{{ field.help_text }}</div>
+                {% endif %}
+                {% if field.errors %}
+                  <div class="text-danger small mt-1">{{ field.errors|join:", " }}</div>
+                {% endif %}
+              </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary">Upload Excel</button>
+          </form>
+
+          <hr class="my-4">
+
+          <div>
+            <h2 class="h6 fw-bold">Sample row</h2>
+            <pre class="bg-light border rounded p-3 mb-0">exam,question,option1,option2,option3,option4,correct
+DSA,Stack follows,LIFO,FIFO,FILO,None,LIFO
+DSA,Queue follows,FIFO,LIFO,FILO,None,FIFO</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

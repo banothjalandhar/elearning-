@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Start Exam{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+          <h1 class="h3 fw-bold mb-2">{{ exam.title }}</h1>
+          <p class="text-muted">{{ exam.get_category_display }}</p>
+          <ul class="list-group mb-4">
+            <li class="list-group-item">Duration: {{ exam.duration }} minutes</li>
+            <li class="list-group-item">Total marks: {{ exam.total_marks }}</li>
+            <li class="list-group-item">Questions: {{ exam.question_count }}</li>
+            <li class="list-group-item">Tab-switch limit: {{ max_warnings }} warnings before auto submit</li>
+            {% if exam.available_from %}
+              <li class="list-group-item">Starts: {{ exam.available_from|date:"d M Y H:i" }}</li>
+            {% endif %}
+            {% if exam.available_until %}
+              <li class="list-group-item">Closes: {{ exam.available_until|date:"d M Y H:i" }}</li>
+            {% endif %}
+          </ul>
+          {% if student_exam and not student_exam.submitted %}
+            <div class="alert alert-warning">You already started this exam. Continuing will resume your existing attempt.</div>
+          {% endif %}
+          <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary">Begin Exam</button>
+            <a href="{% url 'exams:exam_list' %}" class="btn btn-outline-secondary">Back</a>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

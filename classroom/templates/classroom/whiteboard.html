@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}Classroom Whiteboard{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-xl-10">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+          <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+            <div>
+              <h1 class="fw-bold mb-1">Live Classroom Whiteboard</h1>
+              <p class="text-muted mb-0">Use this simple whiteboard for class practice, explanations, and rough work.</p>
+            </div>
+            <div class="d-flex flex-wrap gap-2">
+              <button id="clear-board" class="btn btn-outline-secondary rounded-pill px-4" type="button">Clear</button>
+              <a href="{% url 'classroom:class_list' %}" class="btn btn-outline-dark rounded-pill px-4">Back to Classes</a>
+            </div>
+          </div>
+
+          <div class="d-flex flex-wrap gap-3 align-items-center mb-3">
+            <label class="form-label mb-0 fw-semibold" for="brush-color">Color</label>
+            <input id="brush-color" type="color" value="#1f4ed8" class="form-control form-control-color">
+            <label class="form-label mb-0 fw-semibold" for="brush-size">Brush</label>
+            <input id="brush-size" type="range" min="1" max="12" value="3">
+          </div>
+
+          <canvas id="whiteboard-canvas" class="w-100 border rounded-4" height="520"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  const canvas = document.getElementById("whiteboard-canvas");
+  const context = canvas.getContext("2d");
+  const colorPicker = document.getElementById("brush-color");
+  const brushSize = document.getElementById("brush-size");
+  const clearButton = document.getElementById("clear-board");
+
+  let drawing = false;
+
+  function resizeCanvas() {
+    const ratio = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * ratio;
+    canvas.height = 520 * ratio;
+    context.setTransform(1, 0, 0, 1, 0, 0);
+    context.scale(ratio, ratio);
+    context.lineCap = "round";
+    context.lineJoin = "round";
+    context.strokeStyle = colorPicker.value;
+    context.lineWidth = brushSize.value;
+  }
+
+  function getPoint(event) {
+    const rect = canvas.getBoundingClientRect();
+    if (event.touches && event.touches[0]) {
+      return {
+        x: event.touches[0].clientX - rect.left,
+        y: event.touches[0].clientY - rect.top
+      };
+    }
+    return {
+      x: event.clientX - rect.left,
+      y: event.clientY - rect.top
+    };
+  }
+
+  function startDrawing(event) {
+    drawing = true;
+    const point = getPoint(event);
+    context.beginPath();
+    context.moveTo(point.x, point.y);
+  }
+
+  function draw(event) {
+    if (!drawing) {
+      return;
+    }
+    event.preventDefault();
+    const point = getPoint(event);
+    context.strokeStyle = colorPicker.value;
+    context.lineWidth = brushSize.value;
+    context.lineTo(point.x, point.y);
+    context.stroke();
+  }
+
+  function stopDrawing() {
+    drawing = false;
+    context.closePath();
+  }
+
+  clearButton.addEventListener("click", () => {
+    context.clearRect(0, 0, canvas.width, canvas.height);
+  });
+
+  window.addEventListener("resize", resizeCanvas);
+  canvas.addEventListener("mousedown", startDrawing);
+  canvas.addEventListener("mousemove", draw);
+  canvas.addEventListener("mouseup", stopDrawing);
+  canvas.addEventListener("mouseleave", stopDrawing);
+  canvas.addEventListener("touchstart", startDrawing, { passive: false });
+  canvas.addEventListener("touchmove", draw, { passive: false });
+  canvas.addEventListener("touchend", stopDrawing);
+
+  resizeCanvas();
+</script>
+{% endblock %}

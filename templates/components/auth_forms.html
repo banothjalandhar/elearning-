@@ -1,0 +1,166 @@
+<section class="auth-container">
+  <div class="auth-wrapper">
+    <aside class="auth-left">
+      <span class="auth-kicker">CodeWithJalandhar</span>
+      <h1>Your coding journey starts here</h1>
+      <p>Move from first login to enrolled learner with a cleaner, faster authentication experience built for focus, clarity, and confidence.</p>
+
+      <div class="auth-points">
+        <span><i class="fa-solid fa-circle-check"></i> Access classes, tests, and learning progress in one place</span>
+        <span><i class="fa-solid fa-circle-check"></i> Create your profile quickly with a structured signup flow</span>
+        <span><i class="fa-solid fa-circle-check"></i> Recover access smoothly with guided password reset actions</span>
+      </div>
+
+      <div class="auth-left-card">
+        <h3>Built for serious learners</h3>
+        <p>Clean spacing, stronger contrast, and animated state changes keep each step easy to follow on desktop and mobile.</p>
+      </div>
+    </aside>
+
+    <div class="auth-right">
+      <div class="auth-forms show-login" data-auth-stage>
+        <div class="auth-switchers">
+          <button type="button" class="auth-switch-btn active-btn" data-auth-switch="login">Login</button>
+          <button type="button" class="auth-switch-btn" data-auth-switch="signup">Signup</button>
+          <button type="button" class="auth-switch-btn btn-forgot" data-auth-switch="forgot">Forgot</button>
+        </div>
+
+        <div class="auth-panels">
+          <form method="post" action="{% url 'login' %}" class="form-panel login-form" data-auth-panel="login">
+            {% csrf_token %}
+            <div class="auth-surface">
+              <h2>Welcome back</h2>
+              <p>Login with your existing account to continue to OTP verification.</p>
+
+              <div class="auth-field">
+                <label for="auth-login-email">Email address</label>
+                <input id="auth-login-email" type="email" name="username" class="form-control" placeholder="you@example.com" required>
+              </div>
+
+              <div class="auth-field">
+                <label for="auth-login-password">Password</label>
+                <input id="auth-login-password" type="password" name="password" class="form-control" placeholder="Enter your password" required>
+              </div>
+
+              <div class="auth-actions">
+                <button type="submit" class="btn btn-primary auth-submit-btn">Continue to OTP</button>
+                <button type="button" class="btn btn-forgot auth-inline-btn" data-auth-switch="forgot">Forgot your password?</button>
+              </div>
+            </div>
+          </form>
+
+          <form method="post" action="{% url 'signup' %}" class="form-panel signup-form" data-auth-panel="signup">
+            {% csrf_token %}
+            <div class="auth-surface auth-surface-wide">
+              <div class="auth-surface-head">
+                <div>
+                  <h2>Create account</h2>
+                  <p>Use the existing registration flow with all required details, now organized for faster completion.</p>
+                </div>
+                <div class="auth-mini-note">
+                  <strong>Profile setup</strong>
+                  <span>Complete all required learner details before joining.</span>
+                </div>
+              </div>
+
+              <div class="signup-grid">
+                <div class="auth-field">
+                  <label for="auth-signup-username">Username</label>
+                  <input id="auth-signup-username" type="text" name="username" class="form-control" required>
+                </div>
+
+                <div class="auth-field">
+                  <label for="auth-signup-email">Email</label>
+                  <input id="auth-signup-email" type="email" name="email" class="form-control" required>
+                </div>
+
+                <div class="auth-field">
+                  <label for="auth-signup-password1">Password</label>
+                  <input id="auth-signup-password1" type="password" name="password1" class="form-control" required>
+                </div>
+
+                <div class="auth-field">
+                  <label for="auth-signup-password2">Confirm Password</label>
+                  <input id="auth-signup-password2" type="password" name="password2" class="form-control" required>
+                </div>
+
+                <div class="auth-field">
+                  <label for="auth-signup-phone">Phone Number</label>
+                  <input id="auth-signup-phone" type="text" name="phone" class="form-control" placeholder="+91" required>
+                </div>
+
+                <div class="auth-field">
+                  <label for="auth-signup-dob">Date of Birth</label>
+                  <input id="auth-signup-dob" type="date" name="date_of_birth" class="form-control" required>
+                </div>
+
+                <div class="auth-field">
+                  <label for="auth-signup-qualification">Qualification</label>
+                  <select id="auth-signup-qualification" name="qualification" class="form-select" required>
+                    <option value="">Select qualification</option>
+                    <option value="btech">B.Tech</option>
+                    <option value="mtech">M.Tech</option>
+                    <option value="bca">BCA</option>
+                    <option value="mca">MCA</option>
+                    <option value="bsc">B.Sc</option>
+                    <option value="msc">M.Sc</option>
+                    <option value="others">Others</option>
+                  </select>
+                </div>
+
+                <div class="auth-field">
+                  <label for="auth-signup-branch">Branch</label>
+                  <select id="auth-signup-branch" name="branch" class="form-select" required>
+                    <option value="">Select branch</option>
+                    <option value="cse">Computer Science</option>
+                    <option value="ece">Electronics</option>
+                    <option value="eee">Electrical</option>
+                    <option value="me">Mechanical</option>
+                    <option value="others">Others</option>
+                  </select>
+                </div>
+
+                <div class="auth-field">
+                  <label for="auth-signup-passout">Passout Year</label>
+                  <input id="auth-signup-passout" type="text" name="passout_year" class="form-control" placeholder="2026" required>
+                </div>
+
+                <div class="auth-field">
+                  <label for="auth-signup-college">College Name</label>
+                  <input id="auth-signup-college" type="text" name="college_name" class="form-control" required>
+                </div>
+
+                <div class="auth-field auth-field-full">
+                  <label for="auth-signup-referral">Referral Code</label>
+                  <input id="auth-signup-referral" type="text" name="referral_code" class="form-control" placeholder="Optional">
+                </div>
+              </div>
+
+              <div class="auth-actions">
+                <button type="submit" class="btn btn-primary auth-submit-btn">Join Now</button>
+              </div>
+            </div>
+          </form>
+
+          <form method="post" action="{% url 'password_reset' %}" class="form-panel forgot-form" data-auth-panel="forgot">
+            {% csrf_token %}
+            <div class="auth-surface">
+              <h2>Reset your password</h2>
+              <p>Enter your email and continue with the existing OTP reset flow.</p>
+
+              <div class="auth-field">
+                <label for="auth-forgot-email">Email address</label>
+                <input id="auth-forgot-email" type="email" name="email" class="form-control" placeholder="you@example.com" required>
+              </div>
+
+              <div class="auth-actions">
+                <button type="submit" class="btn btn-forgot auth-submit-btn">Send OTP</button>
+                <button type="button" class="btn auth-inline-btn" data-auth-switch="login">Back to login</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

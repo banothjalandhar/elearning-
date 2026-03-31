@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" role="img" aria-labelledby="title desc">
+  <title id="title">Course placeholder</title>
+  <desc id="desc">Gradient placeholder image for course cards.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#dbeafe"/>
+      <stop offset="50%" stop-color="#bfdbfe"/>
+      <stop offset="100%" stop-color="#ccfbf1"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="800" fill="url(#bg)"/>
+  <circle cx="980" cy="160" r="110" fill="#60a5fa" fill-opacity="0.18"/>
+  <circle cx="240" cy="620" r="180" fill="#2dd4bf" fill-opacity="0.22"/>
+  <rect x="180" y="165" width="840" height="470" rx="36" fill="#ffffff" fill-opacity="0.7"/>
+  <rect x="255" y="255" width="250" height="34" rx="17" fill="#2563eb" fill-opacity="0.85"/>
+  <rect x="255" y="320" width="480" height="22" rx="11" fill="#0f172a" fill-opacity="0.18"/>
+  <rect x="255" y="365" width="400" height="22" rx="11" fill="#0f172a" fill-opacity="0.14"/>
+  <rect x="255" y="470" width="190" height="60" rx="30" fill="#14b8a6" fill-opacity="0.88"/>
+  <path d="M790 275c0-24 19-43 43-43h70c24 0 43 19 43 43v210c0 24-19 43-43 43h-70c-24 0-43-19-43-43V275z" fill="#ffffff" fill-opacity="0.9"/>
+  <path d="M825 300h86v26h-86zm0 50h86v26h-86zm0 50h62v26h-62z" fill="#2563eb" fill-opacity="0.32"/>
+</svg>

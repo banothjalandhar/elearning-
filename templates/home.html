@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Home | CodeWithJalandhar{% endblock %}
+
+{% block content %}
+<section class="hero-section">
+  <div class="container">
+    <div class="row align-items-center gy-5">
+      <div class="col-lg-6">
+        <span class="section-badge">Professional LMS Experience</span>
+        <h1 class="hero-title">Learn Job Ready Skills with CodeWithJalandhar</h1>
+        <p class="hero-subtitle">DSA | Python | Java | Placement Training | Mock Tests</p>
+        <div class="d-flex flex-wrap gap-3">
+          <a href="{% url 'course_list' %}" class="btn btn-primary btn-lg rounded-pill px-4">Explore Courses</a>
+          <a href="{% url 'exams:exam_list' %}" class="btn btn-outline-light btn-lg rounded-pill px-4">Start Exam</a>
+          <a href="{% url 'upcoming_course_list' %}" class="btn btn-glass btn-lg rounded-pill px-4">Join Batch</a>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="hero-visual">
+          <div class="hero-card hero-card-main">
+            <h5>Career Focused Learning</h5>
+            <p>Structured lessons, practice exams, and guided batches designed for placements.</p>
+          </div>
+          <div class="hero-card hero-card-accent">
+            <span><i class="fa-solid fa-chart-line"></i> 95% Placement Support</span>
+          </div>
+          <div class="hero-card hero-card-outline">
+            <span><i class="fa-solid fa-users"></i> 5000+ Students Learning</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
